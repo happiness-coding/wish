@@ -3,6 +3,7 @@ import { FC, useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Editor } from '@tinymce/tinymce-react';
+import tinymce from 'tinymce';
 import { BlogPost } from '../models/BlogPost';
 
 interface BlogFormProps {
@@ -56,7 +57,12 @@ const ButtonGroup = styled.div`
   margin-top: 2rem;
 `;
 
-const Button = styled.button<{ primary?: boolean }>`
+const Button = styled.button.attrs<{ primary?: boolean }>(props => ({
+  // Convert boolean prop to string attribute for HTML compliance
+  type: props.type || 'button',
+  // Don't pass the primary prop to the DOM element
+  primary: undefined
+}))<{ primary?: boolean }>`
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 4px;
@@ -71,6 +77,7 @@ const Button = styled.button<{ primary?: boolean }>`
     background-color: ${props => props.primary ? '#3182ce' : '#cbd5e0'};
   }
 `;
+
 
 export const BlogForm: FC<BlogFormProps> = ({ initialPost = {}, onSave }) => {
   const [title, setTitle] = useState(initialPost.title || '');
@@ -127,22 +134,72 @@ export const BlogForm: FC<BlogFormProps> = ({ initialPost = {}, onSave }) => {
         <FormGroup>
           <Label htmlFor="content">Content *</Label>
           <Editor
-            apiKey="gthtuo29jdumjtcljchc4b8jjmouyg14ps0qgzkyrabtvwgm"
-            value={content}
-            onEditorChange={(newValue) => setContent(newValue)}
-            init={{
-              height: 400,
-              menubar: false,
-              plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
-              ],
-              toolbar:
-                'undo redo | formatselect | bold italic underline | \
-                 alignleft aligncenter alignright alignjustify | \
-                 bullist numlist outdent indent | removeformat | help'
-            }}
+              apiKey="gthtuo29jdumjtcljchc4b8jjmouyg14ps0qgzkyrabtvwgm"
+              value={content}
+              onEditorChange={(newValue) => setContent(newValue)}
+              init={{
+                height: 500,
+                menubar: true,
+
+                // Specify the full cloud location
+                suffix: '.min',
+                base_url: 'https://cdn.tiny.cloud/1/gthtuo29jdumjtcljchc4b8jjmouyg14ps0qgzkyrabtvwgm/tinymce/7.7.1',
+
+                // Use standard plugins list instead of external_plugins
+                plugins: [
+                  'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                  'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                  'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                ],
+
+                toolbar: 'undo redo | blocks | bold italic underline | ' +
+                    'alignleft aligncenter alignright alignjustify | ' +
+                    'bullist numlist outdent indent | link image media | ' +
+                    'removeformat | fullscreen code help',
+                images_upload_url: '/api/upload-image',
+                automatic_uploads: true,
+                file_picker_types: 'image media file',
+                file_picker_callback: (callback, _value, meta) => {
+                  // File picker code remains the same
+                  const input = document.createElement('input');
+                  input.setAttribute('type', 'file');
+
+                  if (meta.filetype === 'image') {
+                    input.setAttribute('accept', 'image/*');
+                  } else if (meta.filetype === 'media') {
+                    input.setAttribute('accept', 'video/*,audio/*');
+                  } else {
+                    input.setAttribute('accept', '.pdf,.doc,.docx,.zip');
+                  }
+
+                  input.onchange = () => {
+                    if (!input.files || !input.files[0]) return;
+
+                    const file = input.files[0];
+                    const reader = new FileReader();
+
+                    reader.onload = () => {
+                      const id = 'blobid' + (new Date()).getTime();
+                      const editor = tinymce.activeEditor;
+
+                      if (editor) {
+                        const blobCache = editor.editorUpload.blobCache;
+                        const base64 = (reader.result as string).split(',')[1];
+                        const blobInfo = blobCache.create(id, file, base64);
+                        blobCache.add(blobInfo);
+
+                        callback(blobInfo.blobUri(), { title: file.name });
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  };
+
+                  input.click();
+                },
+                content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; }',
+                image_advtab: true,
+                image_caption: true
+              }}
           />
         </FormGroup>
 
