@@ -1,8 +1,9 @@
-// src/App.tsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { TaskListPage } from './pages/TaskListPage';
 import { TaskDetailPage } from './pages/TaskDetailPage';
 import { TaskFormPage } from './pages/TaskFormPage.tsx';
+import { TaskListPage } from './pages/TaskListPage';
+import { CalendarPage } from './pages/CalendarPage';
+import { Navbar } from './components/Navbar';
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <div className="app-container">
         <header>
           <h1>Task Manager</h1>
+          <Navbar />
         </header>
         <main>
           <Routes>
@@ -19,6 +21,7 @@ function App() {
             <Route path="/tasks/new" element={<TaskFormPage key="new-task" />} />
             <Route path="/tasks/edit/:id" element={<TaskFormPage key="edit-task" />} />
             <Route path="/tasks/:id" element={<TaskDetailPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
         </main>
