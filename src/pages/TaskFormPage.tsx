@@ -1,10 +1,11 @@
-// src/pages/TaskFormPage.tsx
-import { FC, useEffect, useState, FormEvent, ChangeEvent } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { FC, useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { TaskService } from '../services/TaskService';
+import type { Label as LabelType } from '../models/Task';
+import { LabelSelector } from '../components/LabelSelector';
 
 const FormContainer = styled.div`
   max-width: 900px;
@@ -239,11 +240,13 @@ const Button = styled.button<{ variant?: string }>`
   }
 `;
 
+
 type FormData = {
   title: string;
   description: string;
   dueDate: string;
   priority: 'low' | 'medium' | 'high';
+  labels: LabelType[];  // Changed from Label[] to LabelType[]
 };
 
 export const TaskFormPage: FC = () => {
@@ -255,7 +258,8 @@ export const TaskFormPage: FC = () => {
     title: '',
     description: '',
     dueDate: '',
-    priority: 'medium'
+    priority: 'medium',
+    labels: []
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -271,7 +275,8 @@ export const TaskFormPage: FC = () => {
           title: task.title,
           description: task.description,
           dueDate: task.dueDate ? format(task.dueDate, 'yyyy-MM-dd') : '',
-          priority: task.priority
+          priority: task.priority,
+          labels: task.labels
         });
       } else {
         navigate('/tasks');
@@ -292,6 +297,13 @@ export const TaskFormPage: FC = () => {
   const handlePriorityChange = (priority: 'low' | 'medium' | 'high') => {
     setFormData(prev => ({ ...prev, priority }));
   };
+
+
+  // Add handler for label changes
+  const handleLabelsChange = (labels: LabelType[]) => {
+    setFormData(prev => ({ ...prev, labels }));
+  };
+
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -324,6 +336,7 @@ export const TaskFormPage: FC = () => {
       description: formData.description.trim(),
       dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
       priority: formData.priority,
+      labels: formData.labels,
       isCompleted: isEditMode && id ? TaskService.getTask(parseInt(id, 10))?.isCompleted || false : false
     };
 
@@ -443,6 +456,14 @@ export const TaskFormPage: FC = () => {
                 High
               </RadioLabel>
             </RadioGroup>
+          </FormGroup>
+
+          <FormGroup>
+            <Label>Labels</Label>
+            <LabelSelector
+                selectedLabels={formData.labels}
+                onChange={handleLabelsChange}
+            />
           </FormGroup>
 
           {errors.form && <ErrorMessage>{errors.form}</ErrorMessage>}

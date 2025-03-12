@@ -10,6 +10,7 @@ let tasks: Task[] = [
     dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // tomorrow
     priority: "high",
     isCompleted: false,
+    labels: [],
     createdAt: new Date(),
     updatedAt: new Date()
   }
@@ -47,6 +48,11 @@ export const TaskService = {
     }
     return undefined;
   },
+
+  getTasksByLabel: (labelId: number): Task[] => {
+    return tasks.filter(task => task.labels.some(label => label.id === labelId));
+  },
+
 
   toggleComplete: (id: number): Task | undefined => {
     const index = tasks.findIndex(task => task.id === id);
