@@ -1,452 +1,153 @@
 // src/pages/TaskListPage.tsx
-import { FC, useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Task } from '../models/Task';
+import { FC, useState } from 'react';
+import styled from 'styled-components';
 import { TaskService } from '../services/TaskService';
-import { PlusIcon, FunnelIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useTaskFilters } from '../hooks/useTaskFilters';
+import { useTaskSort } from '../hooks/useTaskSort';
+import { TaskHeader } from '../components/TaskList/TaskHeader';
+import { QuickFilterBar } from '../components/TaskList/QuickFilterBar';
+import { ActiveFilters } from '../components/TaskList/ActiveFilters';
+import { FilterPanel } from '../components/TaskList/FilterPanel';
 import { TaskList } from '../components/TaskList/TaskList';
-import {
-  PageContainer,
-  ListContainer,
-  ListHeader,
-  HeaderContent,
-  ListTitle,
-  Subtitle,
-  AddButton,
-  FilterBar,
-  FilterButton,
-} from '../components/TaskList/styles';
-import {
-  FilterContainer,
-  FilterSection,
-  FilterGroup,
-  FilterLabel,
-  DateFilterGroup,
-  ActiveFiltersContainer,
-  FilterTag,
-  FilterTagText,
-  RemoveFilterButton,
-  FilterIcon,
-  FilterToggle,
-  SectionHeader,
-  SortGroup
-} from '../components/TaskList/filterStyles';
+import { Modal } from '../components/Modal';
+import { TaskForm } from '../components/TaskForm';
 
-type SortDirection = 'asc' | 'desc';
-type DateFilter = 'all' | 'today' | 'tomorrow' | 'thisWeek' | 'nextWeek' | 'overdue' | 'noDueDate';
-
-interface LabelFilter {
-  id: number;
-  name: string;
-  color: string;
-  selected: boolean;
-}
-
-interface FilterType {
-  status: 'all' | 'active' | 'completed';
-  labels: number[];
-  priority: ('low' | 'medium' | 'high')[];
-  dateRange: DateFilter;
-  customDateStart?: string;
-  customDateEnd?: string;
-}
-
-interface SortType {
-  field: 'priority' | 'dueDate' | 'createdAt' | 'created';
-  direction: SortDirection;
-}
+const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+`;
 
 export const TaskListPage: FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [allLabels, setAllLabels] = useState<LabelFilter[]>([]);
-  const [filterExpanded, setFilterExpanded] = useState(false);
-  const navigate = useNavigate();
+  const [tasks, setTasks] = useState(TaskService.listTasks());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
 
-  const [filter, setFilter] = useState<FilterType>({
-    status: 'all',
-    labels: [],
-    priority: [],
-    dateRange: 'all'
-  });
+  const { filter, allLabels, handleStatusChange, handleDateFilterChange, handleLabelToggle,
+    clearLabelFilters, hasActiveFilters } = useTaskFilters(tasks);
+  const { sort, handleSortChange, sortTasks } = useTaskSort();
 
-  const [sort, setSort] = useState<SortType>({
-    field: 'createdAt',
-    direction: 'desc'
-  });
+  const handleAddTask = () => {
+    setSelectedTaskId(null);
+    setIsModalOpen(true);
+  };
 
-  const [dateFilter, setDateFilter] = useState<DateFilter>('all');
+  const handleEditTask = (taskId: number) => {
+    setSelectedTaskId(taskId);
+    setIsModalOpen(true);
+  };
 
-  // Fetch tasks and extract all unique labels
-  useEffect(() => {
-    const allTasks = TaskService.listTasks();
-    setTasks(allTasks);
+  const handleViewTask = (taskId: number) => {
+    setSelectedTaskId(taskId);
+    setIsModalOpen(true);
+  };
 
-    // Extract all unique labels from tasks
-    const labelsMap = new Map<number, LabelFilter>();
+  const handleDeleteTask = (taskId: number) => {
+    TaskService.deleteTask(taskId);
+    setTasks(TaskService.listTasks());
+  };
 
-    allTasks.forEach(task => {
-      task.labels.forEach(label => {
-        if (!labelsMap.has(label.id)) {
-          labelsMap.set(label.id, {
-            ...label,
-            selected: false
-          });
-        }
-      });
-    });
-
-    setAllLabels(Array.from(labelsMap.values()));
-  }, []);
-
-  // Event handlers
-  const handleView = (id: number) => navigate(`/tasks/${id}`);
-  const handleEdit = (id: number) => navigate(`/tasks/edit/${id}`);
-  const handleCreateNew = () => navigate('/tasks/new');
-
-  const handleDelete = (id: number) => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
-      TaskService.deleteTask(id);
+  const handleToggleComplete = (taskId: number) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      TaskService.updateTask(taskId, { ...task, isCompleted: !task.isCompleted });
       setTasks(TaskService.listTasks());
     }
   };
 
-  const handleToggleComplete = (id: number) => {
-    TaskService.toggleComplete(id);
+  const handleTaskSubmit = () => {
     setTasks(TaskService.listTasks());
+    setIsModalOpen(false);
+    setSelectedTaskId(null);
   };
 
-  const handleFilterStatusChange = (status: 'all' | 'active' | 'completed') => {
-    setFilter(prev => ({ ...prev, status }));
+  const handleToggleFilters = () => {
+    setFiltersExpanded(!filtersExpanded);
   };
 
-  const handleDateFilterChange = (dateRange: DateFilter) => {
-    setDateFilter(dateRange);
-    setFilter(prev => ({ ...prev, dateRange }));
-  };
+  const filteredTasks = tasks.filter(task => {
+    // Status filter
+    if (filter.status === 'active' && task.isCompleted) return false;
+    if (filter.status === 'completed' && !task.isCompleted) return false;
 
-  const handleLabelFilterToggle = (labelId: number) => {
-    setAllLabels(prevLabels =>
-      prevLabels.map(label =>
-        label.id === labelId
-          ? { ...label, selected: !label.selected }
-          : label
-      )
-    );
-
-    // Update filter.labels based on selected labels
-    setFilter(prev => {
-      const updatedLabels = allLabels.find(l => l.id === labelId)?.selected
-        ? prev.labels.filter(id => id !== labelId)
-        : [...prev.labels, labelId];
-
-      return { ...prev, labels: updatedLabels };
-    });
-  };
-
-  const handleSortChange = (field: SortType['field']) => {
-    setSort(prev => {
-      if (prev.field === field) {
-        // Toggle direction if clicking the same sort option
-        return { ...prev, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
-      } else {
-        // New field, default to ascending
-        return { field, direction: 'asc' };
-      }
-    });
-  };
-
-  // Filter and sort tasks
-  const getFilteredAndSortedTasks = useCallback(() => {
-    // Step 1: Apply basic completed/active filter
-    let result = tasks.filter(task => {
-      if (filter.status === 'active') return !task.isCompleted;
-      if (filter.status === 'completed') return task.isCompleted;
-      return true;
-    });
-
-    // Step 2: Apply date filter
-    if (dateFilter !== 'all') {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-
-      const nextWeekStart = new Date(today);
-      nextWeekStart.setDate(today.getDate() + 7);
-
-      const thisWeekEnd = new Date(today);
-      thisWeekEnd.setDate(today.getDate() + (6 - today.getDay())); // Sunday is 0, Saturday is 6
-
-      const nextWeekEnd = new Date(thisWeekEnd);
-      nextWeekEnd.setDate(thisWeekEnd.getDate() + 7);
-
-      result = result.filter(task => {
-        if (!task.dueDate) {
-          return dateFilter === 'noDueDate';
-        }
-
-        const dueDate = new Date(task.dueDate);
-        dueDate.setHours(0, 0, 0, 0);
-
-        switch(dateFilter) {
-          case 'today':
-            return dueDate.getTime() === today.getTime();
-          case 'tomorrow':
-            return dueDate.getTime() === tomorrow.getTime();
-          case 'thisWeek':
-            return dueDate >= today && dueDate <= thisWeekEnd;
-          case 'nextWeek':
-            return dueDate > thisWeekEnd && dueDate <= nextWeekEnd;
-          case 'overdue':
-            return dueDate < today && !task.isCompleted;
-          case 'noDueDate':
-            return false; // Handled above
-          default:
-            return true;
-        }
-      });
+    // Labels filter
+    if (filter.labels.length > 0) {
+      const taskLabelIds = task.labels.map(l => l.id);
+      if (!filter.labels.some(labelId => taskLabelIds.includes(labelId))) return false;
     }
 
-    // Step 3: Apply label filters
-    const selectedLabels = allLabels.filter(label => label.selected);
-    if (selectedLabels.length > 0) {
-      result = result.filter(task => {
-        // Task should have at least one of the selected labels
-        return task.labels.some(taskLabel =>
-          selectedLabels.some(selectedLabel => selectedLabel.id === taskLabel.id)
-        );
-      });
-    }
-
-    // Step 4: Sort filtered tasks
-    return [...result].sort((a, b) => {
-      let comparison = 0;
-
-      switch (sort.field) {
-        case 'dueDate':
-          // Handle null dates by putting them at the end
-          if (!a.dueDate && !b.dueDate) comparison = 0;
-          else if (!a.dueDate) comparison = 1;
-          else if (!b.dueDate) comparison = -1;
-          else comparison = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    // Date range filter
+    if (filter.dateRange !== 'all') {
+      // Implement date filtering based on your requirements
+      switch (filter.dateRange) {
+        case 'today':
+          // Add date filtering logic
           break;
-
-        case 'priority': {
-          const priorityValues = { high: 3, medium: 2, low: 1 };
-          comparison = (priorityValues[a.priority] || 0) - (priorityValues[b.priority] || 0);
+        case 'thisWeek':
+          // Add date filtering logic
           break;
-        }
-
-        case 'createdAt':
-        case 'created':
-          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-          break;
-
-        default:
+        case 'noDueDate':
+          if (task.dueDate) return false;
           break;
       }
+    }
 
-      return sort.direction === 'asc' ? comparison : -comparison;
-    });
-  }, [tasks, filter.status, dateFilter, allLabels, sort]);
+    return true;
+  });
 
-  const filteredAndSortedTasks = getFilteredAndSortedTasks();
-  const selectedLabels = allLabels.filter(label => label.selected);
-  const hasActiveFilters = dateFilter !== 'all' || selectedLabels.length > 0;
+  const sortedTasks = sortTasks(filteredTasks);
 
   return (
-    <PageContainer>
-      <ListContainer>
-        <ListHeader>
-          <HeaderContent>
-            <ListTitle>Your Tasks</ListTitle>
-            <Subtitle>Manage your tasks and stay organized</Subtitle>
-          </HeaderContent>
-          <AddButton onClick={handleCreateNew}>
-            <PlusIcon width={20} height={20} />
-            Add New Task
-          </AddButton>
-        </ListHeader>
+    <Container>
+      <TaskHeader onAddTask={handleAddTask} />
 
-        <FilterBar>
-          <FilterSection>
-            <FilterButton
-              $active={filter.status === 'all'}
-              onClick={() => handleFilterStatusChange('all')}
-            >
-              All Tasks
-            </FilterButton>
-            <FilterButton
-              $active={filter.status === 'active'}
-              onClick={() => handleFilterStatusChange('active')}
-            >
-              Active
-            </FilterButton>
-            <FilterButton
-              $active={filter.status === 'completed'}
-              onClick={() => handleFilterStatusChange('completed')}
-            >
-              Completed
-            </FilterButton>
-          </FilterSection>
+      <QuickFilterBar
+        status={filter.status}
+        onStatusChange={handleStatusChange}
+        onToggleFilters={handleToggleFilters}
+        filtersExpanded={filtersExpanded}
+        hasActiveFilters={hasActiveFilters}
+      />
 
-          <FilterToggle onClick={() => setFilterExpanded(!filterExpanded)}>
-            <FilterIcon $active={hasActiveFilters}>
-              <FunnelIcon width={16} height={16} />
-            </FilterIcon>
-            {filterExpanded ? 'Hide Filters' : 'Show Filters'}
-          </FilterToggle>
-        </FilterBar>
+      <ActiveFilters
+        dateFilter={filter.dateRange}
+        selectedLabels={allLabels.filter(label => filter.labels.includes(label.id))}
+        onRemoveDateFilter={() => handleDateFilterChange('all')}
+        onRemoveLabelFilter={(labelId) => handleLabelToggle(labelId)}
+        onClearLabels={clearLabelFilters}
+      />
 
-        {filterExpanded && (
-          <FilterContainer>
-            <FilterGroup>
-              <SectionHeader>Sort By</SectionHeader>
-              <SortGroup>
-                <FilterButton
-                  $active={sort.field === 'dueDate'}
-                  onClick={() => handleSortChange('dueDate')}
-                >
-                  Due Date {sort.field === 'dueDate' && (sort.direction === 'asc' ? '↑' : '↓')}
-                </FilterButton>
-                <FilterButton
-                  $active={sort.field === 'priority'}
-                  onClick={() => handleSortChange('priority')}
-                >
-                  Priority {sort.field === 'priority' && (sort.direction === 'asc' ? '↑' : '↓')}
-                </FilterButton>
-                <FilterButton
-                  $active={sort.field === 'created'}
-                  onClick={() => handleSortChange('created')}
-                >
-                  Created {sort.field === 'created' && (sort.direction === 'asc' ? '↑' : '↓')}
-                </FilterButton>
-              </SortGroup>
-            </FilterGroup>
+      {filtersExpanded && (
+          <FilterPanel
+              filter={{
+                ...filter,
+                priority: [],
+                dateRange: filter.dateRange as "all" | "today" | "thisWeek" | "noDueDate" | "custom"
+              }}
+              sort={{ ...sort, field: sort.field as 'priority' | 'dueDate' | 'createdAt' }}
+              onFilterChange={(newFilter) => handleStatusChange(newFilter.status)}
+              onSortChange={(newSort) => handleSortChange(newSort.field)}
+              availableLabels={allLabels}
+          />      )}
 
-            <FilterGroup>
-              <SectionHeader>Due Date</SectionHeader>
-              <DateFilterGroup>
-                <FilterButton
-                  $active={dateFilter === 'all'}
-                  onClick={() => handleDateFilterChange('all')}
-                >
-                  All Dates
-                </FilterButton>
-                <FilterButton
-                  $active={dateFilter === 'today'}
-                  onClick={() => handleDateFilterChange('today')}
-                >
-                  Today
-                </FilterButton>
-                <FilterButton
-                  $active={dateFilter === 'tomorrow'}
-                  onClick={() => handleDateFilterChange('tomorrow')}
-                >
-                  Tomorrow
-                </FilterButton>
-                <FilterButton
-                  $active={dateFilter === 'thisWeek'}
-                  onClick={() => handleDateFilterChange('thisWeek')}
-                >
-                  This Week
-                </FilterButton>
-                <FilterButton
-                  $active={dateFilter === 'nextWeek'}
-                  onClick={() => handleDateFilterChange('nextWeek')}
-                >
-                  Next Week
-                </FilterButton>
-                <FilterButton
-                  $active={dateFilter === 'overdue'}
-                  onClick={() => handleDateFilterChange('overdue')}
-                >
-                  Overdue
-                </FilterButton>
-                <FilterButton
-                  $active={dateFilter === 'noDueDate'}
-                  onClick={() => handleDateFilterChange('noDueDate')}
-                >
-                  No Due Date
-                </FilterButton>
-              </DateFilterGroup>
-            </FilterGroup>
+      <TaskList
+        tasks={sortedTasks}
+        onView={handleViewTask}
+        onEdit={handleEditTask}
+        onDelete={handleDeleteTask}
+        onToggleComplete={handleToggleComplete}
+      />
 
-            {allLabels.length > 0 && (
-              <FilterGroup>
-                <SectionHeader>Labels</SectionHeader>
-                <FilterLabel>
-                  {allLabels.map(label => (
-                    <FilterButton
-                      key={label.id}
-                      $active={label.selected}
-                      onClick={() => handleLabelFilterToggle(label.id)}
-                      style={{
-                        backgroundColor: label.selected ? `${label.color}20` : undefined,
-                        color: label.selected ? label.color : undefined,
-                        borderColor: label.selected ? label.color : undefined
-                      }}
-                    >
-                      {label.name}
-                    </FilterButton>
-                  ))}
-                </FilterLabel>
-              </FilterGroup>
-            )}
-          </FilterContainer>
-        )}
-
-        {hasActiveFilters && (
-          <ActiveFiltersContainer>
-            {dateFilter !== 'all' && (
-              <FilterTag>
-                <FilterTagText>
-                  {dateFilter === 'today' && 'Due Today'}
-                  {dateFilter === 'tomorrow' && 'Due Tomorrow'}
-                  {dateFilter === 'thisWeek' && 'Due This Week'}
-                  {dateFilter === 'nextWeek' && 'Due Next Week'}
-                  {dateFilter === 'overdue' && 'Overdue'}
-                  {dateFilter === 'noDueDate' && 'No Due Date'}
-                </FilterTagText>
-                <RemoveFilterButton onClick={() => handleDateFilterChange('all')}>
-                  <XMarkIcon width={14} height={14} />
-                </RemoveFilterButton>
-              </FilterTag>
-            )}
-
-            {selectedLabels.map(label => (
-              <FilterTag key={label.id} style={{ backgroundColor: `${label.color}20`, color: label.color }}>
-                <FilterTagText>{label.name}</FilterTagText>
-                <RemoveFilterButton onClick={() => handleLabelFilterToggle(label.id)}>
-                  <XMarkIcon width={14} height={14} />
-                </RemoveFilterButton>
-              </FilterTag>
-            ))}
-
-            {selectedLabels.length > 0 && (
-              <button
-                onClick={() => {
-                  setAllLabels(prevLabels => prevLabels.map(label => ({ ...label, selected: false })));
-                  setFilter(prev => ({ ...prev, labels: [] }));
-                }}
-                className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer ml-2"
-              >
-                Clear labels
-              </button>
-            )}
-          </ActiveFiltersContainer>
-        )}
-
-        <TaskList
-          tasks={filteredAndSortedTasks}
-          onView={handleView}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onToggleComplete={handleToggleComplete}
-        />
-      </ListContainer>
-    </PageContainer>
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <TaskForm
+            taskId={selectedTaskId ?? undefined}
+            onSubmitSuccess={handleTaskSubmit}
+            onCancel={() => setIsModalOpen(false)}
+          />
+        </Modal>
+      )}
+    </Container>
   );
 };
-
