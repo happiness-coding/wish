@@ -17,7 +17,7 @@ import {
   ActionButton,
   EmptyState,
   Container,
-  TaskCard, MetaItem
+  TaskCard, MetaItem, PageContainer, Header
 } from './taskListStyles';
 
 interface TaskListProps {
@@ -37,19 +37,23 @@ export const TaskList: FC<TaskListProps> = ({
   onDelete,
   onToggleComplete
 }) => {
-  if (tasks.length === 0) {
-    return (
-      <EmptyState>
-        <ClockIcon width={48} height={48} />
-        <h4>No tasks match your filters</h4>
-        <p>Try adjusting your filters or create a new task</p>
-      </EmptyState>
-    );
-  }
 
   return (
-    <Container className={isLoading ? 'loading' : ''}>
-      {tasks.map(task => (
+      <PageContainer>
+      <Container className={isLoading ? 'loading' : ''}>
+        <Header>
+          <h1>My Tasks</h1>
+          <p>Organize and manage your tasks efficiently</p>
+        </Header>
+
+        {tasks.length === 0 ? (
+            <EmptyState>
+              <ClockIcon width={48} height={48} />
+              <h4>No tasks match your filters</h4>
+              <p>Try adjusting your filters or create a new task</p>
+            </EmptyState>
+        ) : (
+      tasks.map(task => (
         <TaskCard key={task.id} $completed={task.isCompleted} $priority={task.priority}>
           <CheckboxContainer>
             <StyledCheckbox
@@ -110,7 +114,9 @@ export const TaskList: FC<TaskListProps> = ({
             </ActionButton>
           </Actions>
         </TaskCard>
-      ))}
+          ))
+            )}
     </Container>
+      </PageContainer>
   );
 };

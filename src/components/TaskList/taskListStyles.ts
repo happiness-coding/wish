@@ -25,6 +25,16 @@ export const TaskItem = styled.div<{ $completed?: boolean }>`
   }
 `;
 
+export const PageContainer = styled.div`
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
 export const TaskContent = styled.div`
   flex: 1;
   margin-left: 0.75rem;
@@ -53,53 +63,68 @@ export const TaskActions = styled.div`
 
 
 export const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  opacity: 1;
-  transition: opacity 0.3s ease;
+  gap: 1rem;
   
   &.loading {
-    opacity: 0.6;
+    opacity: 0.7;
+    pointer-events: none;
   }
 `;
 
-export const TaskCard = styled.div<{ $completed?: boolean; $priority: 'low' | 'medium' | 'high' }>`
-  display: flex;
-  padding: 1.25rem; /* Increased padding for better spacing */
-  border-radius: 12px; /* More rounded corners */
-  background-color: white;
+export const Header = styled.div`
+  margin-bottom: 2rem;
+  
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: #6b7280;
+    font-size: 1.125rem;
+  }
+`;
+
+
+export const TaskCard = styled.div<{ $completed?: boolean; $priority: string }>`
+  background: white;
+  border-radius: 16px;
   border: 1px solid #e5e7eb;
-  transition: all 0.2s ease-in-out; /* Smooth transition for hover effects */
+  display: flex;
+  align-items: flex-start;
+  padding: 1.5rem;
+  transition: all 0.2s ease-in-out;
   opacity: ${props => props.$completed ? 0.7 : 1};
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Softer shadow */
-  position: relative; /* For positioning the complete indicator */
-  overflow: hidden; /* Hide any overflowing content */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 
   &:hover {
-    border-color: #d1d5db;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* More pronounced shadow on hover */
-    transform: translateY(-2px); /* Slight lift on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 
-  /* Add a subtle border based on priority */
-  ${props => props.$priority === 'high' && `border-left: 4px solid #e44d26;`}
-  ${props => props.$priority === 'medium' && `border-left: 4px solid #f0ad4e;`}
-  ${props => props.$priority === 'low' && `border-left: 4px solid #5cb85c;`}
+  ${props => props.$priority === 'high' && `
+    border-left: 4px solid #dc2626;
+    background: linear-gradient(to right, rgba(220, 38, 38, 0.03), white 25%);
+  `}
+  ${props => props.$priority === 'medium' && `
+    border-left: 4px solid #f59e0b;
+    background: linear-gradient(to right, rgba(245, 158, 11, 0.03), white 25%);
+  `}
+  ${props => props.$priority === 'low' && `
+    border-left: 4px solid #10b981;
+    background: linear-gradient(to right, rgba(16, 185, 129, 0.03), white 25%);
+  `}
 
-  /* Add a visual cue for completed tasks */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white */
-    z-index: 1;
-    opacity: ${props => props.$completed ? 1 : 0};
-    transition: opacity 0.3s ease;
-    pointer-events: none; /* Ensure it doesn't block clicks */
+  @media (max-width: 768px) {
+    padding: 1rem;
   }
 `;
 
