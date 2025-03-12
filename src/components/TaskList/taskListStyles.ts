@@ -2,13 +2,18 @@
 import styled from 'styled-components';
 
 export const TaskListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding: 0 1rem;
-`;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
 
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+`;
 export const TaskItem = styled.div<{ $completed?: boolean }>`
   display: flex;
   align-items: center;
@@ -27,6 +32,7 @@ export const TaskItem = styled.div<{ $completed?: boolean }>`
 
 export const PageContainer = styled.div`
   min-height: 100vh;
+  width: 100%;
   background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
   padding: 2rem;
 
@@ -63,12 +69,14 @@ export const TaskActions = styled.div`
 
 
 export const Container = styled.div`
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1400px; // Increased from 1200px
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  
+  padding: 0 1rem;
+
   &.loading {
     opacity: 0.7;
     pointer-events: none;
@@ -76,15 +84,17 @@ export const Container = styled.div`
 `;
 
 export const Header = styled.div`
+  width: 100%;
   margin-bottom: 2rem;
-  
+  padding: 0 1rem;
+
   h1 {
-    font-size: 2rem;
+    font-size: 2.25rem;
     font-weight: 700;
     color: #111827;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
-  
+
   p {
     color: #6b7280;
     font-size: 1.125rem;

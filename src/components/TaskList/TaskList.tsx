@@ -17,7 +17,7 @@ import {
   ActionButton,
   EmptyState,
   Container,
-  TaskCard, MetaItem, PageContainer, Header
+  TaskCard, MetaItem, PageContainer, Header, TaskListContainer
 } from './taskListStyles';
 
 interface TaskListProps {
@@ -46,6 +46,7 @@ export const TaskList: FC<TaskListProps> = ({
           <p>Organize and manage your tasks efficiently</p>
         </Header>
 
+        <TaskListContainer>
         {tasks.length === 0 ? (
             <EmptyState>
               <ClockIcon width={48} height={48} />
@@ -116,6 +117,7 @@ export const TaskList: FC<TaskListProps> = ({
         </TaskCard>
           ))
             )}
+        </TaskListContainer>
     </Container>
       </PageContainer>
   );
