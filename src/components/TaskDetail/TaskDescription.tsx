@@ -1,9 +1,5 @@
 import { FC } from 'react';
-import {
-  Description,
-  DescriptionHeader,
-  DescriptionText
-} from './styles';
+import { Description, DescriptionHeader, DescriptionText } from './styles';
 
 interface TaskDescriptionProps {
   description: string;
@@ -15,7 +11,7 @@ export const TaskDescription: FC<TaskDescriptionProps> = ({ description, isCompl
     <Description>
       <DescriptionHeader>Description</DescriptionHeader>
       <DescriptionText isCompleted={isCompleted}>
-        {description || "No description provided."}
+        {description || 'No description provided.'}
       </DescriptionText>
     </Description>
   );

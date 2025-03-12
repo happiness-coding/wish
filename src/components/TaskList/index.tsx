@@ -20,7 +20,7 @@ export const TaskList: FC<TaskListProps> = ({
   onEdit,
   onDelete,
   onToggleComplete,
-  onCreateNew
+  onCreateNew,
 }) => {
   if (tasks.length === 0) {
     return (

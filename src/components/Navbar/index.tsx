@@ -1,10 +1,6 @@
 // src/components/Navbar/index.tsx.tsx
 import { FC } from 'react';
-import {
-  NavbarContainer,
-  NavLinks,
-  StyledNavLink
-} from './styles';
+import { NavbarContainer, NavLinks, StyledNavLink } from './styles';
 
 export const Navbar: FC = () => {
   return (

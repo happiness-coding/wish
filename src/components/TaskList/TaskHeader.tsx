@@ -7,7 +7,7 @@ import {
   Title,
   Description,
   HeaderActions,
-  AddButton
+  AddButton,
 } from './styles';
 
 interface TaskHeaderProps {

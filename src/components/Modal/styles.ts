@@ -25,7 +25,7 @@ export const ModalContainer = styled.div`
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   position: relative;
   animation: slideIn 0.2s ease-out;
-  
+
   @keyframes slideIn {
     from {
       opacity: 0;
@@ -53,7 +53,7 @@ export const CloseButton = styled.button`
   cursor: pointer;
   color: #718096;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background-color: #f7fafc;
     color: #2d3748;

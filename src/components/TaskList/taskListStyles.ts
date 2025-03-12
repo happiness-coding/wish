@@ -6,7 +6,7 @@ export const TaskListContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
-  
+
   @media (min-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -16,7 +16,6 @@ export const TaskListContainer = styled.div`
   }
 `;
 
-
 export const TaskItem = styled.div<{ $completed?: boolean }>`
   display: flex;
   align-items: center;
@@ -25,8 +24,8 @@ export const TaskItem = styled.div<{ $completed?: boolean }>`
   background-color: white;
   border: 1px solid #e2e8f0;
   transition: all 0.2s;
-  opacity: ${props => props.$completed ? 0.7 : 1};
-  
+  opacity: ${props => (props.$completed ? 0.7 : 1)};
+
   &:hover {
     border-color: #cbd5e0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -61,12 +60,10 @@ export const TaskLabelsContainer = styled.div`
   margin-top: 0.375rem;
 `;
 
-
 export const TaskActions = styled.div`
   display: flex;
   gap: 0.5rem;
 `;
-
 
 export const Container = styled.div`
   width: 100%;
@@ -80,7 +77,6 @@ export const Container = styled.div`
     pointer-events: none;
   }
 `;
-
 
 export const Header = styled.div`
   width: 100%;
@@ -100,7 +96,6 @@ export const Header = styled.div`
   }
 `;
 
-
 export const TaskCard = styled.div<{ $completed?: boolean; $priority: string }>`
   background: white;
   border-radius: 12px;
@@ -109,7 +104,7 @@ export const TaskCard = styled.div<{ $completed?: boolean; $priority: string }>`
   flex-direction: column;
   padding: 1rem;
   transition: all 0.2s ease-in-out;
-  opacity: ${props => props.$completed ? 0.7 : 1};
+  opacity: ${props => (props.$completed ? 0.7 : 1)};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
@@ -151,8 +146,8 @@ export const Content = styled.div`
 export const Title = styled.h3<{ $completed?: boolean }>`
   font-size: 1.125rem; /* Slightly larger title */
   font-weight: 600;
-  color: ${props => props.$completed ? '#9ca3af' : '#374151'}; /* Darker text */
-  text-decoration: ${props => props.$completed ? 'line-through' : 'none'};
+  color: ${props => (props.$completed ? '#9ca3af' : '#374151')}; /* Darker text */
+  text-decoration: ${props => (props.$completed ? 'line-through' : 'none')};
   margin-bottom: 0.75rem; /* More space below the title */
   transition: color 0.3s ease; /* Smooth color transition */
 `;
@@ -180,21 +175,29 @@ export const PriorityBadge = styled.span<{ $priority: string }>`
   text-transform: uppercase;
   letter-spacing: 0.05em; /* Slight letter spacing */
   background-color: ${props => {
-    switch(props.$priority) {
-        case 'high': return '#fee2e2';
-        case 'medium': return '#fef3c7';
-        case 'low': return '#ecfdf5';
-        default: return '#f3f4f6';
+    switch (props.$priority) {
+      case 'high':
+        return '#fee2e2';
+      case 'medium':
+        return '#fef3c7';
+      case 'low':
+        return '#ecfdf5';
+      default:
+        return '#f3f4f6';
     }
-}};
+  }};
   color: ${props => {
-    switch(props.$priority) {
-        case 'high': return '#b91c1c';
-        case 'medium': return '#92400e';
-        case 'low': return '#065f46';
-        default: return '#6b7280';
+    switch (props.$priority) {
+      case 'high':
+        return '#b91c1c';
+      case 'medium':
+        return '#92400e';
+      case 'low':
+        return '#065f46';
+      default:
+        return '#6b7280';
     }
-}};
+  }};
 `;
 
 export const LabelsContainer = styled.div`

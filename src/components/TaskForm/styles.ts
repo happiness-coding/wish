@@ -76,7 +76,7 @@ export const Input = styled.input`
   border-radius: 6px;
   font-size: 0.95rem;
   transition: border-color 0.2s ease;
-  
+
   &:focus {
     outline: none;
     border-color: #4f46e5;
@@ -94,7 +94,7 @@ export const Textarea = styled.textarea`
   font-family: inherit;
   resize: vertical;
   transition: border-color 0.2s ease;
-  
+
   &:focus {
     outline: none;
     border-color: #4f46e5;
@@ -116,19 +116,18 @@ export const RadioLabel = styled.label<{ priority: 'low' | 'medium' | 'high'; ch
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   transition: all 0.2s ease;
-  background-color: ${props => props.checked ? 
-    props.priority === 'high' ? '#fed7d7' : 
-    props.priority === 'medium' ? '#feebc8' : 
-    '#c6f6d5' : 
-    'transparent'
-  };
-  
+  background-color: ${props =>
+    props.checked
+      ? props.priority === 'high'
+        ? '#fed7d7'
+        : props.priority === 'medium'
+          ? '#feebc8'
+          : '#c6f6d5'
+      : 'transparent'};
+
   &:hover {
-    background-color: ${props => 
-      props.priority === 'high' ? '#fed7d7' : 
-      props.priority === 'medium' ? '#feebc8' : 
-      '#c6f6d5'
-    };
+    background-color: ${props =>
+      props.priority === 'high' ? '#fed7d7' : props.priority === 'medium' ? '#feebc8' : '#c6f6d5'};
   }
 `;
 
@@ -145,19 +144,26 @@ export const PriorityDot = styled.span<{ priority: 'low' | 'medium' | 'high'; ch
   height: 1rem;
   border-radius: 50%;
   background-color: ${props => {
-    switch(props.priority) {
-      case 'high': return '#e53e3e';
-      case 'medium': return '#dd6b20';
-      case 'low': return '#38a169';
-      default: return '#a0aec0';
+    switch (props.priority) {
+      case 'high':
+        return '#e53e3e';
+      case 'medium':
+        return '#dd6b20';
+      case 'low':
+        return '#38a169';
+      default:
+        return '#a0aec0';
     }
   }};
-  border: 2px solid ${props => props.checked ? 
-    props.priority === 'high' ? '#e53e3e' : 
-    props.priority === 'medium' ? '#dd6b20' : 
-    '#38a169' : 
-    '#cbd5e0'
-  };
+  border: 2px solid
+    ${props =>
+      props.checked
+        ? props.priority === 'high'
+          ? '#e53e3e'
+          : props.priority === 'medium'
+            ? '#dd6b20'
+            : '#38a169'
+        : '#cbd5e0'};
 `;
 
 export const FormActions = styled.div`
@@ -176,15 +182,15 @@ export const Button = styled.button<{ variant?: string }>`
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  
-  background-color: ${props => props.variant === 'primary' ? '#4f46e5' : 'transparent'};
-  color: ${props => props.variant === 'primary' ? 'white' : '#4a5568'};
-  border: ${props => props.variant === 'primary' ? 'none' : '1px solid #e2e8f0'};
-  
+
+  background-color: ${props => (props.variant === 'primary' ? '#4f46e5' : 'transparent')};
+  color: ${props => (props.variant === 'primary' ? 'white' : '#4a5568')};
+  border: ${props => (props.variant === 'primary' ? 'none' : '1px solid #e2e8f0')};
+
   &:hover {
-    background-color: ${props => props.variant === 'primary' ? '#4338ca' : '#f7fafc'};
+    background-color: ${props => (props.variant === 'primary' ? '#4338ca' : '#f7fafc')};
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;

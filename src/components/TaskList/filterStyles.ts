@@ -16,7 +16,7 @@ export const FilterSection = styled.div`
 
 export const FilterGroup = styled.div`
   margin-bottom: 1.5rem;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -48,15 +48,15 @@ export const FilterButton = styled.button<{ $active?: boolean }>`
   padding: 0.375rem 0.75rem;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
-  background-color: ${props => props.$active ? '#edf2f7' : 'white'};
-  color: ${props => props.$active ? '#4f46e5' : '#4a5568'};
+  background-color: ${props => (props.$active ? '#edf2f7' : 'white')};
+  color: ${props => (props.$active ? '#4f46e5' : '#4a5568')};
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background-color: ${props => props.$active ? '#e2e8f0' : '#f7fafc'};
+    background-color: ${props => (props.$active ? '#e2e8f0' : '#f7fafc')};
     border-color: #cbd5e0;
   }
 `;
@@ -88,7 +88,7 @@ export const RemoveFilterButton = styled.button`
   color: inherit;
   cursor: pointer;
   padding: 0;
-  
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.2);
   }
@@ -98,7 +98,7 @@ export const FilterIcon = styled.div<{ $active?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => props.$active ? '#4f46e5' : 'inherit'};
+  color: ${props => (props.$active ? '#4f46e5' : 'inherit')};
 `;
 
 export const FilterToggle = styled.button`
@@ -113,7 +113,7 @@ export const FilterToggle = styled.button`
   font-size: 0.875rem;
   color: #4a5568;
   font-weight: 500;
-  
+
   &:hover {
     background-color: #f7fafc;
     color: #2d3748;

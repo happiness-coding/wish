@@ -2,7 +2,14 @@
 import { useState, useEffect } from 'react';
 import { Task } from '../models/Task';
 
-export type DateFilter = 'all' | 'today' | 'tomorrow' | 'thisWeek' | 'nextWeek' | 'overdue' | 'noDueDate';
+export type DateFilter =
+  | 'all'
+  | 'today'
+  | 'tomorrow'
+  | 'thisWeek'
+  | 'nextWeek'
+  | 'overdue'
+  | 'noDueDate';
 
 export interface LabelFilter {
   id: number;
@@ -38,7 +45,7 @@ export const useTaskFilters = (allTasks: Task[]) => {
         if (!labelsMap.has(label.id)) {
           labelsMap.set(label.id, {
             ...label,
-            selected: false
+            selected: false,
           });
         }
       });
@@ -59,9 +66,7 @@ export const useTaskFilters = (allTasks: Task[]) => {
   const handleLabelToggle = (labelId: number) => {
     setAllLabels(prevLabels =>
       prevLabels.map(label =>
-        label.id === labelId
-          ? { ...label, selected: !label.selected }
-          : label
+        label.id === labelId ? { ...label, selected: !label.selected } : label
       )
     );
 
@@ -89,6 +94,6 @@ export const useTaskFilters = (allTasks: Task[]) => {
     handleDateFilterChange,
     handleLabelToggle,
     clearLabelFilters,
-    hasActiveFilters: dateFilter !== 'all' || allLabels.some(l => l.selected)
+    hasActiveFilters: dateFilter !== 'all' || allLabels.some(l => l.selected),
   };
 };

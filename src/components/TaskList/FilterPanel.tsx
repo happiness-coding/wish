@@ -17,7 +17,7 @@ import {
   RemoveFilterButton,
   FilterToggle,
   FilterIcon,
-  SortGroup
+  SortGroup,
 } from './filterStyles';
 
 interface FilterType {
@@ -47,7 +47,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
   sort,
   onFilterChange,
   onSortChange,
-  availableLabels
+  availableLabels,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -103,21 +103,21 @@ export const FilterPanel: FC<FilterPanelProps> = ({
       status: 'all',
       labels: [],
       priority: [],
-      dateRange: 'all'
+      dateRange: 'all',
     });
   };
 
   const removeLabel = (labelId: number) => {
     onFilterChange({
       ...filter,
-      labels: filter.labels.filter(id => id !== labelId)
+      labels: filter.labels.filter(id => id !== labelId),
     });
   };
 
   const removePriority = (priority: string) => {
     onFilterChange({
       ...filter,
-      priority: filter.priority.filter(p => p !== priority)
+      priority: filter.priority.filter(p => p !== priority),
     });
   };
 
@@ -126,7 +126,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
       ...filter,
       dateRange: 'all',
       customDateStart: undefined,
-      customDateEnd: undefined
+      customDateEnd: undefined,
     });
   };
 
@@ -141,7 +141,6 @@ export const FilterPanel: FC<FilterPanelProps> = ({
     if (sort.field !== field) return null;
     return sort.direction === 'asc' ? <ArrowUpIcon width={16} /> : <ArrowDownIcon width={16} />;
   };
-
 
   return (
     <>
@@ -164,7 +163,10 @@ export const FilterPanel: FC<FilterPanelProps> = ({
           {filter.labels.map(labelId => {
             const label = availableLabels.find(l => l.id === labelId);
             return label ? (
-              <FilterTag key={labelId} style={{ backgroundColor: `${label.color}20`, color: label.color }}>
+              <FilterTag
+                key={labelId}
+                style={{ backgroundColor: `${label.color}20`, color: label.color }}
+              >
                 <FilterTagText>{label.name}</FilterTagText>
                 <RemoveFilterButton onClick={() => removeLabel(labelId)}>
                   <XMarkIcon width={12} />
@@ -175,7 +177,9 @@ export const FilterPanel: FC<FilterPanelProps> = ({
 
           {filter.priority.map(priority => (
             <FilterTag key={priority}>
-              <FilterTagText>Priority: {priority.charAt(0).toUpperCase() + priority.slice(1)}</FilterTagText>
+              <FilterTagText>
+                Priority: {priority.charAt(0).toUpperCase() + priority.slice(1)}
+              </FilterTagText>
               <RemoveFilterButton onClick={() => removePriority(priority)}>
                 <XMarkIcon width={12} />
               </RemoveFilterButton>
@@ -185,10 +189,15 @@ export const FilterPanel: FC<FilterPanelProps> = ({
           {filter.dateRange !== 'all' && (
             <FilterTag>
               <FilterTagText>
-                {filter.dateRange === 'today' ? 'Due Today' :
-                 filter.dateRange === 'thisWeek' ? 'Due This Week' :
-                 filter.dateRange === 'noDueDate' ? 'No Due Date' :
-                 filter.dateRange === 'custom' ? 'Custom Date Range' : ''}
+                {filter.dateRange === 'today'
+                  ? 'Due Today'
+                  : filter.dateRange === 'thisWeek'
+                    ? 'Due This Week'
+                    : filter.dateRange === 'noDueDate'
+                      ? 'No Due Date'
+                      : filter.dateRange === 'custom'
+                        ? 'Custom Date Range'
+                        : ''}
               </FilterTagText>
               <RemoveFilterButton onClick={removeDateRange}>
                 <XMarkIcon width={12} />
@@ -209,7 +218,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
         <FilterIcon $active={hasActiveFilters}>
           <FunnelIcon width={16} height={16} />
         </FilterIcon>
-        {isExpanded ? "Hide Filters" : "Show Filters"}
+        {isExpanded ? 'Hide Filters' : 'Show Filters'}
       </FilterToggle>
 
       {isExpanded && (
@@ -246,24 +255,30 @@ export const FilterPanel: FC<FilterPanelProps> = ({
               <FilterButton
                 $active={filter.priority.includes('high')}
                 onClick={() => handlePriorityToggle('high')}
-                style={{ backgroundColor: filter.priority.includes('high') ? '#fee2e2' : undefined,
-                         color: filter.priority.includes('high') ? '#dc2626' : undefined }}
+                style={{
+                  backgroundColor: filter.priority.includes('high') ? '#fee2e2' : undefined,
+                  color: filter.priority.includes('high') ? '#dc2626' : undefined,
+                }}
               >
                 High
               </FilterButton>
               <FilterButton
                 $active={filter.priority.includes('medium')}
                 onClick={() => handlePriorityToggle('medium')}
-                style={{ backgroundColor: filter.priority.includes('medium') ? '#fef9c3' : undefined,
-                         color: filter.priority.includes('medium') ? '#ca8a04' : undefined }}
+                style={{
+                  backgroundColor: filter.priority.includes('medium') ? '#fef9c3' : undefined,
+                  color: filter.priority.includes('medium') ? '#ca8a04' : undefined,
+                }}
               >
                 Medium
               </FilterButton>
               <FilterButton
                 $active={filter.priority.includes('low')}
                 onClick={() => handlePriorityToggle('low')}
-                style={{ backgroundColor: filter.priority.includes('low') ? '#dcfce7' : undefined,
-                         color: filter.priority.includes('low') ? '#16a34a' : undefined }}
+                style={{
+                  backgroundColor: filter.priority.includes('low') ? '#dcfce7' : undefined,
+                  color: filter.priority.includes('low') ? '#16a34a' : undefined,
+                }}
               >
                 Low
               </FilterButton>
@@ -309,23 +324,27 @@ export const FilterPanel: FC<FilterPanelProps> = ({
             {filter.dateRange === 'custom' && (
               <DateFilterGroup>
                 <div>
-                  <label htmlFor="dateStart" className="text-xs text-gray-500">From</label>
+                  <label htmlFor="dateStart" className="text-xs text-gray-500">
+                    From
+                  </label>
                   <input
                     id="dateStart"
                     type="date"
                     className="border border-gray-200 rounded-md p-1"
                     value={filter.customDateStart || ''}
-                    onChange={(e) => handleCustomDateChange('customDateStart', e.target.value)}
+                    onChange={e => handleCustomDateChange('customDateStart', e.target.value)}
                   />
                 </div>
                 <div>
-                  <label htmlFor="dateEnd" className="text-xs text-gray-500">To</label>
+                  <label htmlFor="dateEnd" className="text-xs text-gray-500">
+                    To
+                  </label>
                   <input
                     id="dateEnd"
                     type="date"
                     className="border border-gray-200 rounded-md p-1"
                     value={filter.customDateEnd || ''}
-                    onChange={(e) => handleCustomDateChange('customDateEnd', e.target.value)}
+                    onChange={e => handleCustomDateChange('customDateEnd', e.target.value)}
                   />
                 </div>
               </DateFilterGroup>
@@ -346,9 +365,7 @@ export const FilterPanel: FC<FilterPanelProps> = ({
                       backgroundColor: filter.labels.includes(label.id)
                         ? `${label.color}20`
                         : undefined,
-                      color: filter.labels.includes(label.id)
-                        ? label.color
-                        : undefined
+                      color: filter.labels.includes(label.id) ? label.color : undefined,
                     }}
                   >
                     {label.name}

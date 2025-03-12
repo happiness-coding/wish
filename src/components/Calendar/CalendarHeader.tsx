@@ -9,7 +9,7 @@ import {
   MonthName,
   NavButton,
   TodayButton,
-  SrOnly
+  SrOnly,
 } from './styles';
 
 interface CalendarHeaderProps {
@@ -23,7 +23,7 @@ export const CalendarHeader: FC<CalendarHeaderProps> = ({
   currentDate,
   onPrevMonth,
   onNextMonth,
-  onToday
+  onToday,
 }) => {
   const monthYearFormat = format(currentDate, 'MMMM yyyy');
 

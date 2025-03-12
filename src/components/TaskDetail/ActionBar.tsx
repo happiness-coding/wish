@@ -13,26 +13,26 @@ export const ActionBar: FC<ActionBarProps> = ({
   isCompleted,
   onToggleComplete,
   onEdit,
-  onDelete
+  onDelete,
 }) => {
   return (
     <StyledActionBar>
-      <ActionButton
-        variant="complete"
-        onClick={onToggleComplete}
-      >
-        <IconWrapper><CheckIcon /></IconWrapper>
-        {isCompleted ? "Mark as Incomplete" : "Mark as Complete"}
+      <ActionButton variant="complete" onClick={onToggleComplete}>
+        <IconWrapper>
+          <CheckIcon />
+        </IconWrapper>
+        {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
       </ActionButton>
-      <ActionButton
-        variant="edit"
-        onClick={onEdit}
-      >
-        <IconWrapper><PencilIcon /></IconWrapper>
+      <ActionButton variant="edit" onClick={onEdit}>
+        <IconWrapper>
+          <PencilIcon />
+        </IconWrapper>
         Edit Task
       </ActionButton>
       <ActionButton variant="delete" onClick={onDelete}>
-        <IconWrapper><TrashIcon /></IconWrapper>
+        <IconWrapper>
+          <TrashIcon />
+        </IconWrapper>
         Delete Task
       </ActionButton>
     </StyledActionBar>
