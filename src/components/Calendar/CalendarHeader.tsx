@@ -7,7 +7,7 @@ import {
   MonthNavigation,
   MonthName,
   NavButton,
-  TodayButton
+  TodayButton, SrOnly
 } from './styles';
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon } from '@heroicons/react/24/outline';
 interface CalendarHeaderProps {
@@ -24,20 +24,23 @@ export const CalendarHeader: FC<CalendarHeaderProps> = ({
   onToday
 }) => {
   return (
-    <Header>
-      <Title>Task Calendar</Title>
-      <MonthNavigation>
-        <NavButton onClick={onPrevMonth} aria-label="Previous month">
-          <ChevronLeftIcon width={20} height={20} />
-        </NavButton>
-        <MonthName>{format(currentDate, 'MMMM yyyy')}</MonthName>
-        <NavButton onClick={onNextMonth} aria-label="Next month">
-          <ChevronRightIcon width={20} height={20} />
-        </NavButton>
-        <TodayButton onClick={onToday}>
-          <CalendarIcon width={16} height={16} />
-          Today
-        </TodayButton>
-      </MonthNavigation>    </Header>
+      <Header>
+        <Title>Task Calendar</Title>
+        <MonthNavigation>
+          <NavButton onClick={onPrevMonth} aria-label="Previous month">
+            <ChevronLeftIcon width={20} height={20} />
+            <SrOnly>Next</SrOnly>
+          </NavButton>
+          <MonthName>{format(currentDate, 'MMMM yyyy')}</MonthName>
+          <NavButton onClick={onNextMonth} aria-label="Next month">
+            <ChevronRightIcon width={20} height={20} />
+            <SrOnly>Next</SrOnly>
+          </NavButton>
+          <TodayButton onClick={onToday}>
+            <CalendarIcon width={16} height={16} />
+            Today
+          </TodayButton>
+        </MonthNavigation>
+      </Header>
   );
 };

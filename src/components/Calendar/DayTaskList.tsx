@@ -20,12 +20,12 @@ export const DayTaskList: FC<DayTaskListProps> = ({ tasks, onTaskClick }) => {
         >
           {(provided, snapshot) => (
             <TaskItem
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-              priority={task.priority}
-              isCompleted={task.isCompleted}
-              isDragging={snapshot.isDragging}
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                $priority={task.priority}
+                $isCompleted={task.isCompleted}
+                $isDragging={snapshot.isDragging}
               onClick={(e) => {
                 e.stopPropagation();
                 onTaskClick(task.id);

@@ -29,17 +29,17 @@ export const CalendarDay: FC<CalendarDayProps> = ({
 
   return (
     <Day
-      ref={droppableProvided.innerRef}
-      {...droppableProvided.droppableProps}
-      isCurrentMonth={isCurrentMonth}
-      isWeekend={isWeekend}
-      isToday={isToday}
-      isUnscheduledSection={isUnscheduledSection}
+        ref={droppableProvided.innerRef}
+        {...droppableProvided.droppableProps}
+        $isCurrentMonth={isCurrentMonth}
+        $isWeekend={isWeekend}
+        $isToday={isToday}
+        $isUnscheduledSection={isUnscheduledSection}
     >
       {day && (
-        <DayNumber isWeekend={isWeekend} isToday={isToday}>
-          {format(day, 'd')}
-        </DayNumber>
+          <DayNumber $isWeekend={isWeekend} $isToday={isToday}>
+            {format(day, 'd')}
+          </DayNumber>
       )}
 
       <DayTaskList
