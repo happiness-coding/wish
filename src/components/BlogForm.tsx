@@ -11,21 +11,63 @@ interface BlogFormProps {
   onSave: (post: Partial<BlogPost>) => void;
 }
 
+// Updated responsive styles
 const PageContainer = styled.div`
   background-color: #f9fafb;
-  min-height: 100vh;
-  padding: 2.5rem 1rem;
+  min-height: calc(100vh - 80px); // Accounting for header/footer
+  padding: 2rem 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 2.5rem 2rem;
+  }
 `;
 
 const FormContainer = styled.div`
-  max-width: 900px;
+  width: 100%;
+  max-width: 1100px; // Increased from 900px for better use of space
   margin: 0 auto;
-  padding: 2.5rem;
+  padding: 1.5rem;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  
+  @media (min-width: 640px) {
+    padding: 2rem;
+  }
+  
+  @media (min-width: 1024px) {
+    padding: 2.5rem 3rem;
+  }
 `;
 
+// Improve editor responsiveness
+const EditorWrapper = styled.div`
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+
+  .tox-tinymce {
+    border: none !important;
+    border-radius: 8px;
+    min-height: 300px; // Set minimum height for small screens
+  }
+  
+  @media (min-width: 768px) {
+    .tox-tinymce {
+      min-height: 400px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .tox-tinymce {
+      min-height: 500px;
+    }
+  }
+
+  .tox-statusbar {
+    border-top: 1px solid #f1f5f9 !important;
+  }
+`;
 const FormHeader = styled.div`
   margin-bottom: 2.5rem;
   text-align: center;
@@ -129,20 +171,6 @@ const Button = styled.button.attrs<{ primary?: boolean }>(props => ({
   }
 `;
 
-const EditorWrapper = styled.div`
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-
-  .tox-tinymce {
-    border: none !important;
-    border-radius: 8px;
-  }
-
-  .tox-statusbar {
-    border-top: 1px solid #f1f5f9 !important;
-  }
-`;
 
 export const BlogForm: FC<BlogFormProps> = ({ initialPost = {}, onSave }) => {
   const [title, setTitle] = useState(initialPost.title || '');
@@ -251,7 +279,8 @@ export const BlogForm: FC<BlogFormProps> = ({ initialPost = {}, onSave }) => {
                                   value={content}
                                   onEditorChange={(newValue) => setContent(newValue)}
                                   init={{
-                                    height: 500,
+                                      height: window.innerWidth < 768 ? 300 : window.innerWidth < 1024 ? 400 : 500,
+                                      resize: true, // Allow editor resizing
                                     menubar: true,
 
                                     // Visual settings
