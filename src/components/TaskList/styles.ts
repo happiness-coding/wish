@@ -34,6 +34,24 @@ export const HeaderContent = styled.div`
   }
 `;
 
+export const LabelsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+export const LabelChip = styled.div<{ color: string }>`
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  background-color: ${props => `${props.color}20`};
+  color: ${props => props.color};
+  font-size: 0.75rem;
+  font-weight: 600;
+`;
+
 export const ListTitle = styled.h1`
   font-size: 2.5rem;
   font-weight: 700;

@@ -30,6 +30,24 @@ export const IconWrapper = styled.span`
   height: 1.25rem;
 `;
 
+export const LabelsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+`;
+
+export const LabelChip = styled.div<{ color: string }>`
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background-color: ${props => `${props.color}20`};
+  color: ${props => props.color};
+  font-size: 0.875rem;
+  font-weight: 600;
+`;
 export const TaskHeader = styled.div<{ priority: 'low' | 'medium' | 'high' }>`
   position: relative;
   background-color: white;

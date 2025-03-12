@@ -1,3 +1,4 @@
+// In src/components/TaskDetail/TaskHeader.tsx
 import { FC } from 'react';
 import { format } from 'date-fns';
 import { Task } from '../../models/Task';
@@ -9,7 +10,9 @@ import {
   MetaContainer,
   MetaItem,
   MetaLabel,
-  MetaValue
+  MetaValue,
+  LabelsContainer,
+  LabelChip
 } from './styles';
 
 interface TaskHeaderProps {
@@ -25,6 +28,17 @@ export const TaskHeader: FC<TaskHeaderProps> = ({ task, isPastDue }) => {
           {task.isCompleted ? 'Completed' : 'Active'}
         </StatusBadge>
         <Title isCompleted={task.isCompleted}>{task.title}</Title>
+
+        {task.labels.length > 0 && (
+          <LabelsContainer>
+            {task.labels.map(label => (
+              <LabelChip key={label.id} color={label.color}>
+                {label.name}
+              </LabelChip>
+            ))}
+          </LabelsContainer>
+        )}
+
         <MetaContainer>
           <MetaItem>
             <MetaLabel>Priority</MetaLabel>

@@ -1,4 +1,4 @@
-// src/components/TaskList/TaskCard.tsx
+// In src/components/TaskList/TaskCard.tsx
 import { FC } from 'react';
 import { format } from 'date-fns';
 import { Task } from '../../models/Task';
@@ -15,7 +15,9 @@ import {
   CreatedDate,
   Actions,
   ActionButton,
-  IconWrapper
+  IconWrapper,
+  LabelsContainer,
+  LabelChip
 } from './styles';
 
 interface TaskCardProps {
@@ -49,6 +51,17 @@ export const TaskCard: FC<TaskCardProps> = ({
         <Description isCompleted={task.isCompleted}>
           {task.description || "No description provided."}
         </Description>
+
+        {task.labels.length > 0 && (
+          <LabelsContainer>
+            {task.labels.map(label => (
+              <LabelChip key={label.id} color={label.color}>
+                {label.name}
+              </LabelChip>
+            ))}
+          </LabelsContainer>
+        )}
+
         <Meta>
           {task.dueDate ? (
             <DueDate isPastDue={isPastDue(task.dueDate) && !task.isCompleted}>
