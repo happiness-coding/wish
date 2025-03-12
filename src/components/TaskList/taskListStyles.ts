@@ -4,16 +4,15 @@ import styled from 'styled-components';
 export const TaskListContainer = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
-  padding: 1rem;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 1rem;
-    padding: 0.5rem;
   }
 `;
+
 export const TaskItem = styled.div<{ $completed?: boolean }>`
   display: flex;
   align-items: center;
@@ -31,14 +30,9 @@ export const TaskItem = styled.div<{ $completed?: boolean }>`
 `;
 
 export const PageContainer = styled.div`
-  min-height: 100vh;
+  min-height: calc(100vh - 120px); // Adjust for header/footer
   width: 100%;
   background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
-  padding: 2rem;
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
 `;
 
 export const TaskContent = styled.div`
@@ -70,12 +64,14 @@ export const TaskActions = styled.div`
 
 export const Container = styled.div`
   width: 100%;
-  max-width: 1400px; // Increased from 1200px
-  margin: 0 auto;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 0 1rem;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 
   &.loading {
     opacity: 0.7;

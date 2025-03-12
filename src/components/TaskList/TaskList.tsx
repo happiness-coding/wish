@@ -17,7 +17,7 @@ import {
   ActionButton,
   EmptyState,
   Container,
-  TaskCard, MetaItem, PageContainer, Header, TaskListContainer
+  TaskCard, MetaItem, PageContainer, TaskListContainer
 } from './taskListStyles';
 
 interface TaskListProps {
@@ -41,11 +41,6 @@ export const TaskList: FC<TaskListProps> = ({
   return (
       <PageContainer>
       <Container className={isLoading ? 'loading' : ''}>
-        <Header>
-          <h1>My Tasks</h1>
-          <p>Organize and manage your tasks efficiently</p>
-        </Header>
-
         <TaskListContainer>
         {tasks.length === 0 ? (
             <EmptyState>
