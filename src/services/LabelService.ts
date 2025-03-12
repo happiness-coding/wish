@@ -5,7 +5,7 @@ import { Label } from '../models/Task';
 let labels: Label[] = [
   { id: 1, name: 'Work', color: '#3b82f6' },
   { id: 2, name: 'Personal', color: '#8b5cf6' },
-  { id: 3, name: 'Shopping', color: '#ec4899' },
+  { id: 3, name: 'Urgent', color: '#ec4899' },
   { id: 4, name: 'Health', color: '#10b981' }
 ];
 
