@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Task } from '../models/Task';
 import { TaskService } from '../services/TaskService';
 import { PlusIcon, FunnelIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { TaskList } from '../components/TaskList/TaskList';
 import {
   PageContainer,
   ListContainer,
@@ -141,6 +142,7 @@ export const TaskListPage: FC = () => {
       return { ...prev, labels: updatedLabels };
     });
   };
+
   const handleSortChange = (field: SortType['field']) => {
     setSort(prev => {
       if (prev.field === field) {
@@ -423,69 +425,28 @@ export const TaskListPage: FC = () => {
             ))}
 
             {selectedLabels.length > 0 && (
-                <button
-                    onClick={() => {
-                      setAllLabels(prevLabels => prevLabels.map(label => ({ ...label, selected: false })));
-                      setFilter(prev => ({ ...prev, labels: [] }));
-                    }}
-                    className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer ml-2"
-                >
-                  Clear labels
-                </button>
+              <button
+                onClick={() => {
+                  setAllLabels(prevLabels => prevLabels.map(label => ({ ...label, selected: false })));
+                  setFilter(prev => ({ ...prev, labels: [] }));
+                }}
+                className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer ml-2"
+              >
+                Clear labels
+              </button>
             )}
           </ActiveFiltersContainer>
         )}
 
-        {/* Task list section */}
-        <div className="task-list">
-          {filteredAndSortedTasks.map(task => (
-              <div key={task.id} className="task-item">
-                <input
-                    type="checkbox"
-                    checked={task.isCompleted}
-                    onChange={() => handleToggleComplete(task.id)}
-                />
-                <div
-                    className="task-content"
-                    onClick={() => handleView(task.id)}
-                >
-        <span className={task.isCompleted ? 'completed' : ''}>
-          {task.title}
-        </span>
-                  {task.labels.length > 0 && (
-                      <div className="task-labels">
-                        {task.labels.map(label => (
-                            <span
-                                key={label.id}
-                                style={{
-                                  backgroundColor: `${label.color}20`,
-                                  color: label.color
-                                }}
-                                className="label-tag"
-                            >
-                {label.name}
-              </span>
-                        ))}
-                      </div>
-                  )}
-                </div>
-                <div className="task-actions">
-                  <button onClick={() => handleEdit(task.id)}>Edit</button>
-                  <button onClick={() => handleDelete(task.id)}>Delete</button>
-                </div>
-              </div>
-          ))}
-
-          {filteredAndSortedTasks.length === 0 && (
-              <div className="empty-state">
-                No tasks match your current filters
-              </div>
-          )}
-        </div>
-
+        <TaskList
+          tasks={filteredAndSortedTasks}
+          onView={handleView}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onToggleComplete={handleToggleComplete}
+        />
       </ListContainer>
     </PageContainer>
   );
 };
 
-export default TaskListPage;
