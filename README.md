@@ -1,54 +1,69 @@
-# React + TypeScript + Vite
+# Task Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern task management application built with React, TypeScript, and Vite. This application helps users organize tasks, set priorities, and view them in both list and calendar views.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Task List View**: View, filter, and sort your tasks with an intuitive interface
+- **Calendar View**: Visualize and manage tasks with due dates in a calendar interface
+- **Task Management**: Create, edit, delete and toggle completion status of tasks
+- **Priority Levels**: Assign low, medium, or high priority to tasks
+- **Labeling System**: Categorize tasks with color-coded labels
+- **Drag and Drop**: Move tasks between dates in calendar view
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React 18, TypeScript
+- **Styling**: Styled Components
+- **Routing**: React Router v6
+- **State Management**: React Hooks
+- **Date Handling**: date-fns
+- **Drag and Drop**: @hello-pangea/dnd
+- **Build Tool**: Vite
+- **Package Manager**: pnpm
+- **CI/CD**: GitHub Actions
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
-```
+## Getting Started
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Prerequisites
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+- Node.js v18 or higher
+- pnpm (recommended) or npm
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
-```
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/happiness-coding/wish.git
+   cd wish
+   ```
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+3. Start the development server:
+   ```bash
+   pnpm dev
+   ```
+4. Open the application in your browser:
+   ```
+   http://localhost:5173
+   ```
+
+## Available Scripts
+
+- `pnpm dev`: Start the development server
+- `pnpm build`: Build the application for production
+- `pnpm serve`: Serve the production build locally
+- `pnpm test`: Run tests
+- `pnpm lint`: Lint the codebase
+
+## Contributing
+
+1. Create a feature branch from the sit branch
+2. Make your changes
+3. Submit a pull request to the sit branch
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
