@@ -1,3 +1,4 @@
+// src/components/Calendar/index.tsx
 import { FC, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -20,14 +21,15 @@ import { Modal } from '../Modal';
 import { TaskForm } from '../TaskForm';
 import { DropResult } from '@hello-pangea/dnd';
 
-
 export const Calendar: FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [tasks, setTasks] = useState<Task[]>([]);
   const [calendarDays, setCalendarDays] = useState<Date[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
-    useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  useNavigate();
 // Generate calendar days for the current month
   const generateCalendarDays = useCallback((date: Date) => {
     const monthStart = startOfMonth(date);
@@ -42,15 +44,24 @@ export const Calendar: FC = () => {
   }, []);
 
   // Fetch tasks
-  useEffect(() => {
-    const fetchTasks = () => {
-      const allTasks = TaskService.listTasks();
+  const fetchTasks = useCallback(async () => {
+    setLoading(true);
+    try {
+      const allTasks = await TaskService.listTasks();
       setTasks(allTasks);
-    };
+      setError(null);
+    } catch (err) {
+      setError('Failed to load tasks. Please try again later.');
+      console.error('Error fetching tasks:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
     fetchTasks();
     setCalendarDays(generateCalendarDays(currentDate));
-  }, [currentDate, generateCalendarDays]);
+  }, [currentDate, generateCalendarDays, fetchTasks]);
 
   // Handle month navigation
   const handlePrevMonth = () => {
@@ -72,7 +83,7 @@ export const Calendar: FC = () => {
   };
 
   // Handle drag and drop
-    const handleDragEnd = (result: DropResult) => {
+  const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
 
     const { draggableId, destination } = result;
@@ -82,18 +93,23 @@ export const Calendar: FC = () => {
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
 
-    // Update the task due date
-    const updatedTask = {
-      ...task,
-      dueDate: newDate
-    };
+    try {
+      // Update the task due date
+      const updatedTask = await TaskService.updateTask(taskId, {
+        ...task,
+        dueDate: newDate
+      });
 
-    TaskService.updateTask(taskId, updatedTask);
-
-    // Update local state
-    setTasks(prevTasks =>
-      prevTasks.map(t => t.id === taskId ? { ...t, dueDate: newDate } : t)
-    );
+      // Update local state if update was successful
+      if (updatedTask) {
+        setTasks(prevTasks =>
+          prevTasks.map(t => t.id === taskId ? { ...t, dueDate: newDate } : t)
+        );
+      }
+    } catch (err) {
+      console.error('Error updating task date:', err);
+      setError('Failed to update task. Please try again.');
+    }
   };
 
   const handleCloseModal = () => {
@@ -101,10 +117,9 @@ export const Calendar: FC = () => {
     setSelectedTaskId(null);
   };
 
-  const handleTaskUpdateSuccess = () => {
+  const handleTaskUpdateSuccess = async () => {
     // Refresh tasks
-    const updatedTasks = TaskService.listTasks();
-    setTasks(updatedTasks);
+    await fetchTasks();
     setIsModalOpen(false);
     setSelectedTaskId(null);
   };
@@ -128,16 +143,27 @@ export const Calendar: FC = () => {
         onToday={handleToday}
       />
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <CalendarGrid
-          days={calendarDays}
-          currentDate={currentDate}
-          tasks={tasks}
-          onTaskClick={handleTaskClick}
-          getTasksForDate={getTasksForDate}
-          unscheduledTasks={unscheduledTasks}
-        />
-      </DragDropContext>
+      {loading && <div className="loading-spinner">Loading calendar...</div>}
+
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+          <button onClick={fetchTasks}>Retry</button>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <CalendarGrid
+            days={calendarDays}
+            currentDate={currentDate}
+            tasks={tasks}
+            onTaskClick={handleTaskClick}
+            getTasksForDate={getTasksForDate}
+            unscheduledTasks={unscheduledTasks}
+          />
+        </DragDropContext>
+      )}
 
       {isModalOpen && selectedTaskId && (
         <Modal onClose={handleCloseModal}>
