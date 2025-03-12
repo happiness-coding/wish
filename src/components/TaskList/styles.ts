@@ -255,37 +255,36 @@ export const ActionButton = styled.button<{ variant?: string }>`
 
   background-color: ${props => {
     switch(props.variant) {
-      case 'delete': return '#FED7D7';
-      case 'edit': return '#E9D8FD';
-      case 'complete': return '#C6F6D5';
-      case 'view': return '#BEE3F8';
-      default: return '#E2E8F0';
+        case 'delete': return '#FED7D7';
+        case 'edit': return '#E9D8FD';
+        case 'complete': return '#C6F6D5';
+        case 'view': return '#BEE3F8';
+        default: return '#E2E8F0';
     }
-  }};
+}};
 
   color: ${props => {
     switch(props.variant) {
-      case 'delete': return '#E53E3E';
-      case 'edit': return '#805AD5';
-      case 'complete': return '#38A169';
-      case 'view': return '#3182CE';
-      default: return '#4A5568';
+        case 'delete': return '#E53E3E';
+        case 'edit': return '#805AD5';
+        case 'complete': return '#38A169';
+        case 'view': return '#3182CE';
+        default: return '#4A5568';
     }
-  }};
+}};
 
   &:hover {
     background-color: ${props => {
-      switch(props.variant) {
+    switch(props.variant) {
         case 'delete': return '#FEB2B2';
         case 'edit': return '#D6BCFA';
         case 'complete': return '#9AE6B4';
         case 'view': return '#90CDF4';
         default: return '#CBD5E0';
-      }
-    }};
+    }
+}};
   }
 `;
-
 export const IconWrapper = styled.span`
   width: 1rem;
   height: 1rem;

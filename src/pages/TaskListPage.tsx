@@ -135,19 +135,19 @@ export const TaskListPage: FC = () => {
         <FilterBar>
           <FilterSection>
             <FilterButton
-              active={filter === 'all'}
+              $active={filter === 'all'}
               onClick={() => handleFilterChange('all')}
             >
               All Tasks
             </FilterButton>
             <FilterButton
-              active={filter === 'active'}
+                $active={filter === 'active'}
               onClick={() => handleFilterChange('active')}
             >
               Active
             </FilterButton>
             <FilterButton
-              active={filter === 'completed'}
+                $active={filter === 'completed'}
               onClick={() => handleFilterChange('completed')}
             >
               Completed
@@ -156,19 +156,19 @@ export const TaskListPage: FC = () => {
 
           <FilterSection>
             <SortButton
-              active={sortBy === 'dueDate'}
+                $active={sortBy === 'dueDate'}
               onClick={() => handleSortChange('dueDate')}
             >
               Due Date {sortBy === 'dueDate' && (sortDirection === 'asc' ? '↑' : '↓')}
             </SortButton>
             <SortButton
-              active={sortBy === 'priority'}
+                $active={sortBy === 'priority'}
               onClick={() => handleSortChange('priority')}
             >
               Priority {sortBy === 'priority' && (sortDirection === 'asc' ? '↑' : '↓')}
             </SortButton>
             <SortButton
-              active={sortBy === 'created'}
+                $active={sortBy === 'created'}
               onClick={() => handleSortChange('created')}
             >
               Created {sortBy === 'created' && (sortDirection === 'asc' ? '↑' : '↓')}

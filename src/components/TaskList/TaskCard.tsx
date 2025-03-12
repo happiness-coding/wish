@@ -1,8 +1,9 @@
-// In src/components/TaskList/TaskCard.tsx
 import { FC } from 'react';
-import { format } from 'date-fns';
+import { format, isPast, isToday } from 'date-fns';
+import {
+  CheckIcon, PencilIcon, TrashIcon, EyeIcon
+} from '@heroicons/react/24/outline';
 import { Task } from '../../models/Task';
-import { EyeIcon, PencilIcon, TrashIcon, CheckIcon } from '@heroicons/react/24/outline';
 import {
   Card,
   PriorityBanner,
@@ -35,23 +36,23 @@ export const TaskCard: FC<TaskCardProps> = ({
   onDelete,
   onToggleComplete
 }) => {
-  const isPastDue = (date: Date | null) => {
-    if (!date) return false;
-    return new Date(date) < new Date();
-  };
+  const isPastDue = task.dueDate && isPast(new Date(task.dueDate)) && !isToday(new Date(task.dueDate));
 
   return (
-// In TaskCard.tsx
-      <Card $isCompleted={task.isCompleted}>
-        <PriorityBanner $priority={task.priority} />
-        <Content>
-          <PriorityLabel $priority={task.priority}>
-            {task.priority} priority
-          </PriorityLabel>
-          <Title $isCompleted={task.isCompleted}>{task.title}</Title>
+    <Card $isCompleted={task.isCompleted}>
+      <PriorityBanner $priority={task.priority} />
+      <Content>
+        <PriorityLabel $priority={task.priority}>
+          {task.priority}
+        </PriorityLabel>
+
+        <Title $isCompleted={task.isCompleted}>{task.title}</Title>
+
+        {task.description && (
           <Description $isCompleted={task.isCompleted}>
-            {task.description || "No description provided."}
+            {task.description}
           </Description>
+        )}
 
         {task.labels.length > 0 && (
           <LabelsContainer>
@@ -65,50 +66,43 @@ export const TaskCard: FC<TaskCardProps> = ({
 
         <Meta>
           {task.dueDate ? (
-              <DueDate $isPastDue={isPastDue(task.dueDate) && !task.isCompleted}>
-                Due: {format(task.dueDate, 'MMM dd, yyyy')}
+              <DueDate $isPastDue={!!isPastDue && !task.isCompleted}>
+                {task.dueDate ? `Due: ${format(new Date(task.dueDate), 'MMM d, yyyy')}` : 'No due date'}
               </DueDate>
           ) : (
             <DueDate $isPastDue={false}>No due date</DueDate>
           )}
-          <CreatedDate>Created: {format(task.createdAt, 'MMM dd')}</CreatedDate>
+          <CreatedDate>
+            Created: {format(new Date(task.createdAt), 'MMM d')}
+          </CreatedDate>
         </Meta>
       </Content>
+
       <Actions>
         <ActionButton
           onClick={() => onToggleComplete(task.id)}
           variant="complete"
-          aria-label={task.isCompleted ? "Mark as incomplete" : "Mark as complete"}
-          title={task.isCompleted ? "Mark as incomplete" : "Mark as complete"}
         >
           <IconWrapper><CheckIcon /></IconWrapper>
         </ActionButton>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <ActionButton
-            onClick={() => onView(task.id)}
-            variant="view"
-            aria-label="View task details"
-            title="View task details"
-          >
-            <IconWrapper><EyeIcon /></IconWrapper>
-          </ActionButton>
-          <ActionButton
-            onClick={() => onEdit(task.id)}
-            variant="edit"
-            aria-label="Edit task"
-            title="Edit task"
-          >
-            <IconWrapper><PencilIcon /></IconWrapper>
-          </ActionButton>
-          <ActionButton
-            onClick={() => onDelete(task.id)}
-            variant="delete"
-            aria-label="Delete task"
-            title="Delete task"
-          >
-            <IconWrapper><TrashIcon /></IconWrapper>
-          </ActionButton>
-        </div>
+        <ActionButton
+          onClick={() => onView(task.id)}
+          variant="view"
+        >
+          <IconWrapper><EyeIcon /></IconWrapper>
+        </ActionButton>
+        <ActionButton
+          onClick={() => onEdit(task.id)}
+          variant="edit"
+        >
+          <IconWrapper><PencilIcon /></IconWrapper>
+        </ActionButton>
+        <ActionButton
+          onClick={() => onDelete(task.id)}
+          variant="delete"
+        >
+          <IconWrapper><TrashIcon /></IconWrapper>
+        </ActionButton>
       </Actions>
     </Card>
   );
