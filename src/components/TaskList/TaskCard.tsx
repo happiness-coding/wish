@@ -41,16 +41,17 @@ export const TaskCard: FC<TaskCardProps> = ({
   };
 
   return (
-    <Card isCompleted={task.isCompleted}>
-      <PriorityBanner priority={task.priority} />
-      <Content>
-        <PriorityLabel priority={task.priority}>
-          {task.priority} priority
-        </PriorityLabel>
-        <Title isCompleted={task.isCompleted}>{task.title}</Title>
-        <Description isCompleted={task.isCompleted}>
-          {task.description || "No description provided."}
-        </Description>
+// In TaskCard.tsx
+      <Card $isCompleted={task.isCompleted}>
+        <PriorityBanner $priority={task.priority} />
+        <Content>
+          <PriorityLabel $priority={task.priority}>
+            {task.priority} priority
+          </PriorityLabel>
+          <Title $isCompleted={task.isCompleted}>{task.title}</Title>
+          <Description $isCompleted={task.isCompleted}>
+            {task.description || "No description provided."}
+          </Description>
 
         {task.labels.length > 0 && (
           <LabelsContainer>
@@ -64,11 +65,11 @@ export const TaskCard: FC<TaskCardProps> = ({
 
         <Meta>
           {task.dueDate ? (
-            <DueDate isPastDue={isPastDue(task.dueDate) && !task.isCompleted}>
-              Due: {format(task.dueDate, 'MMM dd, yyyy')}
-            </DueDate>
+              <DueDate $isPastDue={isPastDue(task.dueDate) && !task.isCompleted}>
+                Due: {format(task.dueDate, 'MMM dd, yyyy')}
+              </DueDate>
           ) : (
-            <DueDate isPastDue={false}>No due date</DueDate>
+            <DueDate $isPastDue={false}>No due date</DueDate>
           )}
           <CreatedDate>Created: {format(task.createdAt, 'MMM dd')}</CreatedDate>
         </Meta>

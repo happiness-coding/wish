@@ -98,19 +98,19 @@ export const FilterBar = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 `;
 
-export const FilterButton = styled.button<{ active: boolean }>`
+export const FilterButton = styled.button<{ $active: boolean }>`
   padding: 0.5rem 1rem;
   border-radius: 6px;
   border: none;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  background-color: ${props => props.active ? '#4f46e5' : '#f1f5f9'};
-  color: ${props => props.active ? 'white' : '#475569'};
+  background-color: ${props => props.$active ? '#4f46e5' : '#f1f5f9'};
+  color: ${props => props.$active ? 'white' : '#475569'};
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: ${props => props.active ? '#4338ca' : '#e2e8f0'};
+    background-color: ${props => props.$active ? '#4338ca' : '#e2e8f0'};
   }
 `;
 
@@ -128,7 +128,7 @@ export const Grid = styled.div`
   }
 `;
 
-export const Card = styled.div<{ isCompleted: boolean }>`
+export const Card = styled.div<{ $isCompleted: boolean }>`
   background: white;
   border-radius: 12px;
   overflow: hidden;
@@ -137,7 +137,7 @@ export const Card = styled.div<{ isCompleted: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
-  opacity: ${props => props.isCompleted ? 0.8 : 1};
+  opacity: ${props => props.$isCompleted ? 0.8 : 1};
 
   &:hover {
     transform: translateY(-2px);
@@ -145,10 +145,10 @@ export const Card = styled.div<{ isCompleted: boolean }>`
   }
 `;
 
-export const PriorityBanner = styled.div<{ priority: 'low' | 'medium' | 'high' }>`
+export const PriorityBanner = styled.div<{ $priority: 'low' | 'medium' | 'high' }>`
   height: 8px;
   background-color: ${props => {
-    switch(props.priority) {
+    switch(props.$priority) {
       case 'high': return '#ef4444';
       case 'medium': return '#f59e0b';
       case 'low': return '#10b981';
@@ -164,12 +164,12 @@ export const Content = styled.div`
   flex-direction: column;
 `;
 
-export const PriorityLabel = styled.div<{ priority: 'low' | 'medium' | 'high' }>`
+export const PriorityLabel = styled.div<{ $priority: 'low' | 'medium' | 'high' }>`
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   color: ${props => {
-    switch(props.priority) {
+    switch(props.$priority) {
       case 'high': return '#dc2626';
       case 'medium': return '#d97706';
       case 'low': return '#059669';
@@ -180,14 +180,14 @@ export const PriorityLabel = styled.div<{ priority: 'low' | 'medium' | 'high' }>
   margin-bottom: 0.75rem;
 `;
 
-export const Title = styled.h3<{ isCompleted: boolean }>`
+export const Title = styled.h3<{ $isCompleted: boolean }>`
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
   color: #1a202c;
   line-height: 1.4;
-  text-decoration: ${props => props.isCompleted ? 'line-through' : 'none'};
-  opacity: ${props => props.isCompleted ? 0.7 : 1};
+  text-decoration: ${props => props.$isCompleted ? 'line-through' : 'none'};
+  opacity: ${props => props.$isCompleted ? 0.7 : 1};
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -195,14 +195,14 @@ export const Title = styled.h3<{ isCompleted: boolean }>`
   overflow: hidden;
 `;
 
-export const Description = styled.div<{ isCompleted: boolean }>`
+export const Description = styled.div<{ $isCompleted: boolean }>`
   color: #4a5568;
   font-size: 0.95rem;
   line-height: 1.6;
   margin-bottom: 1.5rem;
   flex-grow: 1;
-  text-decoration: ${props => props.isCompleted ? 'line-through' : 'none'};
-  opacity: ${props => props.isCompleted ? 0.7 : 1};
+  text-decoration: ${props => props.$isCompleted ? 'line-through' : 'none'};
+  opacity: ${props => props.$isCompleted ? 0.7 : 1};
 
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -219,10 +219,10 @@ export const Meta = styled.div`
   border-top: 1px solid #edf2f7;
 `;
 
-export const DueDate = styled.div<{ isPastDue: boolean }>`
+export const DueDate = styled.div<{ $isPastDue: boolean }>`
   font-size: 0.875rem;
-  color: ${props => props.isPastDue ? '#dc2626' : '#718096'};
-  font-weight: ${props => props.isPastDue ? '600' : '400'};
+  color: ${props => props.$isPastDue ? '#dc2626' : '#718096'};
+  font-weight: ${props => props.$isPastDue ? '600' : '400'};
 `;
 
 export const CreatedDate = styled.div`

@@ -1,4 +1,3 @@
-// src/components/Calendar/styles.ts
 import styled from 'styled-components';
 
 export const CalendarContainer = styled.div`
@@ -8,16 +7,14 @@ export const CalendarContainer = styled.div`
 `;
 
 export const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 2rem;
 `;
 
 export const Title = styled.h1`
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #1a202c;
+  margin-bottom: 1.5rem;
 `;
 
 export const MonthNavigation = styled.div`
@@ -26,189 +23,46 @@ export const MonthNavigation = styled.div`
   gap: 1rem;
 `;
 
-export const MonthName = styled.h2`
-  font-size: 1.5rem;
+export const MonthName = styled.div`
+  font-size: 1.25rem;
   font-weight: 600;
-  min-width: 200px;
+  color: #2d3748;
+  min-width: 10rem;
   text-align: center;
 `;
 
 export const NavButton = styled.button`
-  background: white;
+  background: none;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  width: 40px;
-  height: 40px;
+  border-radius: 6px;
+  padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  color: #4a5568;
   transition: all 0.2s ease;
-  color: #4a5568;
-  
+
   &:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e0;
-    color: #4f46e5;
-  }
-  
-  &:active {
-    transform: translateY(1px);
+    background-color: #f7fafc;
+    color: #2d3748;
   }
 `;
-
-export const Calendar = styled.div`
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-`;
-
-export const WeekHeader = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background: #f7fafc;
-  border-bottom: 1px solid #e2e8f0;
-`;
-
-export const WeekDay = styled.div`
-  padding: 1rem;
-  text-align: center;
-  font-weight: 600;
-  color: #4a5568;
-`;
-
-export const CalendarGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: minmax(120px, auto);
-`;
-
-
-export const DayNumber = styled.div<{ $isWeekend: boolean; $isToday: boolean }>`
-  font-weight: ${props => props.$isToday ? 700 : 500};
-  color: ${props => {
-    if (props.$isToday) return '#3182ce';
-    return props.$isWeekend ? '#a0aec0' : '#2d3748';
-}};
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-`;
-
-export const TaskList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  max-height: 95px;
-  overflow-y: auto;
-`;
-
 
 export const TodayButton = styled.button`
+  background: #e2e8f0;
+  border: none;
+  border-radius: 6px;
   padding: 0.5rem 1rem;
-  background: white;
-  color: #4f46e5;
-  border: 1px solid #4f46e5;
-  border-radius: 8px;
   font-weight: 500;
+  color: #2d3748;
   cursor: pointer;
   transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  
+  margin-left: 0.5rem;
+
   &:hover {
-    background: #4f46e5;
-    color: white;
+    background-color: #cbd5e0;
   }
-  
-  &:active {
-    transform: translateY(1px);
-  }
-`;
-
-export const Day = styled.div<{
-    $isCurrentMonth?: boolean;
-    $isWeekend?: boolean;
-    $isToday?: boolean;
-    $isUnscheduledSection?: boolean;
-}>`
-  border: 1px solid #e2e8f0;
-  padding: 0.5rem;
-  background: ${props => {
-    if (props.$isUnscheduledSection) return '#f8fafc';
-    if (props.$isToday) return '#ebf4ff';
-    return props.$isCurrentMonth ? 'white' : '#f7fafc';
-}};
-  opacity: ${props => props.$isCurrentMonth ? 1 : 0.5};
-  min-height: 120px;
-  position: relative;
-`;
-export const TaskItem = styled.div<{
-    $priority: 'low' | 'medium' | 'high';
-    $isCompleted: boolean;
-    $isDragging?: boolean;
-}>`
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  background-color: ${props => {
-    if (props.$isDragging) return '#edf2f7';
-    if (props.$isCompleted) return '#f0fff4';
-
-    switch(props.$priority) {
-        case 'high': return '#fed7d7';
-        case 'medium': return '#feebc8';
-        case 'low': return '#c6f6d5';
-        default: return '#e2e8f0';
-    }
-}};
-  color: ${props => {
-    if (props.$isCompleted) return '#38a169';
-
-    switch(props.$priority) {
-        case 'high': return '#e53e3e';
-        case 'medium': return '#dd6b20';
-        case 'low': return '#2f855a';
-        default: return '#4a5568';
-    }
-}};
-  border-left: 3px solid ${props => {
-    if (props.$isCompleted) return '#38a169';
-
-    switch(props.$priority) {
-        case 'high': return '#e53e3e';
-        case 'medium': return '#dd6b20';
-        case 'low': return '#2f855a';
-        default: return '#a0aec0';
-    }
-}};
-  cursor: grab;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-decoration: ${props => props.$isCompleted ? 'line-through' : 'none'};
-  box-shadow: ${props => props.$isDragging ? '0 2px 4px rgba(0, 0, 0, 0.1)' : 'none'};
-  transform: ${props => props.$isDragging ? 'scale(1.02)' : 'none'};
-  
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-export const UnscheduledTasksContainer = styled.div`
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  margin-top: 2rem;
-`;
-
-export const UnscheduledTasksHeader = styled.div`
-  padding: 1rem;
-  background: #f7fafc;
-  border-bottom: 1px solid #e2e8f0;
-  font-weight: 600;
-  color: #4a5568;
 `;
 
 export const SrOnly = styled.span`
@@ -221,4 +75,126 @@ export const SrOnly = styled.span`
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+`;
+
+export const Calendar = styled.div`
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+`;
+
+export const WeekHeader = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background-color: #f7fafc;
+  border-bottom: 1px solid #edf2f7;
+`;
+
+export const WeekDay = styled.div`
+  padding: 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.875rem;
+`;
+
+export const CalendarGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  min-height: 600px;
+`;
+
+export const Day = styled.div<{ $isCurrentMonth?: boolean; $isWeekend?: boolean; $isToday?: boolean; $isUnscheduledSection?: boolean }>`
+  border-right: 1px solid #edf2f7;
+  border-bottom: 1px solid #edf2f7;
+  min-height: 100px;
+  padding: 0.5rem;
+  background-color: ${props => {
+    if (props.$isUnscheduledSection) return '#f7fafc';
+    if (!props.$isCurrentMonth) return '#f8fafc';
+    if (props.$isToday) return '#ebf4ff';
+    return 'white';
+  }};
+  opacity: ${props => !props.$isCurrentMonth ? 0.6 : 1};
+  
+  &:nth-child(7n) {
+    border-right: none;
+  }
+`;
+
+export const DayNumber = styled.div<{ $isWeekend?: boolean; $isToday?: boolean }>`
+  display: inline-block;
+  width: 1.75rem;
+  height: 1.75rem;
+  line-height: 1.75rem;
+  text-align: center;
+  font-weight: ${props => props.$isToday ? 600 : 400};
+  border-radius: 9999px;
+  background-color: ${props => props.$isToday ? '#3182ce' : 'transparent'};
+  color: ${props => {
+    if (props.$isToday) return 'white';
+    return props.$isWeekend ? '#e53e3e' : '#2d3748';
+  }};
+  margin-bottom: 0.5rem;
+`;
+
+export const TaskList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+`;
+
+export const TaskItem = styled.div<{ $priority: 'low' | 'medium' | 'high'; $isCompleted: boolean; $isDragging: boolean }>`
+  padding: 0.375rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  text-decoration: ${props => props.$isCompleted ? 'line-through' : 'none'};
+  opacity: ${props => props.$isCompleted ? 0.7 : 1};
+  box-shadow: ${props => props.$isDragging ? '0 5px 10px rgba(0, 0, 0, 0.15)' : 'none'};
+  
+  background-color: ${props => {
+    const colors = {
+      low: '#dcfce7',
+      medium: '#fef9c3',
+      high: '#fee2e2'
+    };
+    return colors[props.$priority];
+  }};
+  
+  color: ${props => {
+    const colors = {
+      low: '#16a34a',
+      medium: '#ca8a04',
+      high: '#dc2626'
+    };
+    return colors[props.$priority];
+  }};
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+`;
+
+export const UnscheduledTasksContainer = styled.div`
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+`;
+
+export const UnscheduledTasksHeader = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 1rem;
+  background-color: #f7fafc;
+  border-bottom: 1px solid #edf2f7;
+  margin: 0;
+  color: #2d3748;
 `;
