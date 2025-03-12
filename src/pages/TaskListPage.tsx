@@ -1,6 +1,5 @@
 // src/pages/TaskListPage.tsx
 import { FC, useState } from 'react';
-import styled from 'styled-components';
 import { TaskService } from '../services/TaskService';
 import { useTaskFilters } from '../hooks/useTaskFilters';
 import { useTaskSort } from '../hooks/useTaskSort';
@@ -11,12 +10,10 @@ import { FilterPanel } from '../components/TaskList/FilterPanel';
 import { TaskList } from '../components/TaskList/TaskList';
 import { Modal } from '../components/Modal';
 import { TaskForm } from '../components/TaskForm';
+import {
+  Container,
+} from '../components/TaskList/taskListStyles';
 
-const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-`;
 
 export const TaskListPage: FC = () => {
   const [tasks, setTasks] = useState(TaskService.listTasks());
