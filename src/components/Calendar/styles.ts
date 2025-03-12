@@ -44,10 +44,16 @@ export const NavButton = styled.button`
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-
+  color: #4a5568;
+  
   &:hover {
-    background: #f7fafc;
+    background: #f1f5f9;
     border-color: #cbd5e0;
+    color: #4f46e5;
+  }
+  
+  &:active {
+    transform: translateY(1px);
   }
 `;
 
@@ -100,20 +106,26 @@ export const TaskList = styled.div`
 
 export const TodayButton = styled.button`
   padding: 0.5rem 1rem;
-  background: #4f46e5;
-  color: white;
-  border: none;
+  background: white;
+  color: #4f46e5;
+  border: 1px solid #4f46e5;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
   
   &:hover {
-    background: #4338ca;
+    background: #4f46e5;
+    color: white;
+  }
+  
+  &:active {
+    transform: translateY(1px);
   }
 `;
-
-// Additional styles to add to src/components/Calendar/styles.ts
 
 export const Day = styled.div<{
   isCurrentMonth?: boolean;
