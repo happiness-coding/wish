@@ -12,7 +12,7 @@ import {
   NoTaskMessage,
   NoTaskTitle,
   NoTaskText,
-  ActionButton
+  ActionButton,
 } from './styles';
 
 interface TaskDetailProps {
@@ -34,9 +34,8 @@ export const TaskDetail: FC<TaskDetailProps> = ({
   onToggleComplete,
   onEdit,
   onDelete,
-  onRetry
+  onRetry,
 }) => {
-
   const isPastDue = (date: Date | null): boolean => {
     if (!date) return false;
     return isPast(new Date(date)) && !isToday(new Date(date));
@@ -88,15 +87,9 @@ export const TaskDetail: FC<TaskDetailProps> = ({
         Back to Tasks
       </BackLink>
 
-      <TaskHeader
-        task={task}
-        isPastDue={isPastDue}
-      />
+      <TaskHeader task={task} isPastDue={isPastDue} />
 
-      <TaskDescription
-        description={task.description}
-        isCompleted={task.isCompleted}
-      />
+      <TaskDescription description={task.description} isCompleted={task.isCompleted} />
 
       <ActionBar
         isCompleted={task.isCompleted}

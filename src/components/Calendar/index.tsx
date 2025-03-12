@@ -9,7 +9,7 @@ import {
   eachDayOfInterval,
   addMonths,
   subMonths,
-  isSameDay
+  isSameDay,
 } from 'date-fns';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { TaskService } from '../../services/TaskService';
@@ -30,7 +30,7 @@ export const Calendar: FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   useNavigate();
-// Generate calendar days for the current month
+  // Generate calendar days for the current month
   const generateCalendarDays = useCallback((date: Date) => {
     const monthStart = startOfMonth(date);
     const monthEnd = endOfMonth(date);
@@ -39,7 +39,7 @@ export const Calendar: FC = () => {
 
     return eachDayOfInterval({
       start: calendarStart,
-      end: calendarEnd
+      end: calendarEnd,
     });
   }, []);
 
@@ -97,13 +97,13 @@ export const Calendar: FC = () => {
       // Update the task due date
       const updatedTask = await TaskService.updateTask(taskId, {
         ...task,
-        dueDate: newDate
+        dueDate: newDate,
       });
 
       // Update local state if update was successful
       if (updatedTask) {
         setTasks(prevTasks =>
-          prevTasks.map(t => t.id === taskId ? { ...t, dueDate: newDate } : t)
+          prevTasks.map(t => (t.id === taskId ? { ...t, dueDate: newDate } : t))
         );
       }
     } catch (err) {
@@ -124,12 +124,12 @@ export const Calendar: FC = () => {
     setSelectedTaskId(null);
   };
 
-  const getTasksForDate = useCallback((date: Date): Task[] => {
-    return tasks.filter(task =>
-      task.dueDate &&
-      isSameDay(new Date(task.dueDate), date)
-    );
-  }, [tasks]);
+  const getTasksForDate = useCallback(
+    (date: Date): Task[] => {
+      return tasks.filter(task => task.dueDate && isSameDay(new Date(task.dueDate), date));
+    },
+    [tasks]
+  );
 
   // Unscheduled tasks (tasks without due date)
   const unscheduledTasks = tasks.filter(task => !task.dueDate);

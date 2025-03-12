@@ -12,19 +12,19 @@ const apiClient = axios.create({
 
 // Request interceptor for adding auth token
 apiClient.interceptors.request.use(
-  (config) => {
+  config => {
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  error => Promise.reject(error)
 );
 
 // Response interceptor for handling errors
 apiClient.interceptors.response.use(
-  (response) => response,
+  response => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       // Handle unauthorized access (e.g., redirect to login)
@@ -39,15 +39,27 @@ export const get = <T>(url: string, config?: AxiosRequestConfig): Promise<T> => 
   return apiClient.get(url, config).then((response: AxiosResponse<T>) => response.data);
 };
 
-export const post = <T, D = Record<string, unknown>>(url: string, data?: D, config?: AxiosRequestConfig): Promise<T> => {
+export const post = <T, D = Record<string, unknown>>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<T> => {
   return apiClient.post(url, data, config).then((response: AxiosResponse<T>) => response.data);
 };
 
-export const put = <T, D = Record<string, unknown>>(url: string, data?: D, config?: AxiosRequestConfig): Promise<T> => {
+export const put = <T, D = Record<string, unknown>>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<T> => {
   return apiClient.put(url, data, config).then((response: AxiosResponse<T>) => response.data);
 };
 
-export const patch = <T, D = Record<string, unknown>>(url: string, data?: D, config?: AxiosRequestConfig): Promise<T> => {
+export const patch = <T, D = Record<string, unknown>>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<T> => {
   return apiClient.patch(url, data, config).then((response: AxiosResponse<T>) => response.data);
 };
 

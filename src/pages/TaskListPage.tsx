@@ -60,8 +60,15 @@ export const TaskListPage: FC = () => {
     }
   };
 
-  const { filter, allLabels, handleStatusChange, handleDateFilterChange, handleLabelToggle,
-    clearLabelFilters, hasActiveFilters } = useTaskFilters(tasks);
+  const {
+    filter,
+    allLabels,
+    handleStatusChange,
+    handleDateFilterChange,
+    handleLabelToggle,
+    clearLabelFilters,
+    hasActiveFilters,
+  } = useTaskFilters(tasks);
   const { sort, handleSortChange, sortTasks } = useTaskSort();
 
   const handleAddTask = () => {
@@ -153,10 +160,7 @@ export const TaskListPage: FC = () => {
 
   return (
     <Container>
-      <TaskHeader
-        onAddTask={handleAddTask}
-        taskCount={filteredTasks.length}
-      />
+      <TaskHeader onAddTask={handleAddTask} taskCount={filteredTasks.length} />
 
       {loading && <LoadingSpinner />}
 
@@ -176,7 +180,7 @@ export const TaskListPage: FC = () => {
             dateFilter={filter.dateRange}
             selectedLabels={allLabels.filter(label => filter.labels.includes(label.id))}
             onRemoveDateFilter={() => handleDateFilterChange('all')}
-            onRemoveLabelFilter={(labelId) => handleLabelToggle(labelId)}
+            onRemoveLabelFilter={labelId => handleLabelToggle(labelId)}
             onClearLabels={clearLabelFilters}
           />
 
@@ -185,11 +189,16 @@ export const TaskListPage: FC = () => {
               filter={{
                 ...filter,
                 priority: [],
-                dateRange: filter.dateRange as "all" | "today" | "thisWeek" | "noDueDate" | "custom"
+                dateRange: filter.dateRange as
+                  | 'all'
+                  | 'today'
+                  | 'thisWeek'
+                  | 'noDueDate'
+                  | 'custom',
               }}
               sort={{ ...sort, field: sort.field as 'priority' | 'dueDate' | 'createdAt' }}
-              onFilterChange={(newFilter) => handleStatusChange(newFilter.status)}
-              onSortChange={(newSort) => handleSortChange(newSort.field)}
+              onFilterChange={newFilter => handleStatusChange(newFilter.status)}
+              onSortChange={newSort => handleSortChange(newSort.field)}
               availableLabels={allLabels}
             />
           )}

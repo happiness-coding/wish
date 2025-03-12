@@ -59,7 +59,9 @@ export const TaskAPI = {
   },
 
   // Batch update multiple tasks
-  batchUpdateTasks: (updates: Array<{ id: number, task: Partial<Task> }>): Promise<BatchUpdateResponse> => {
+  batchUpdateTasks: (
+    updates: Array<{ id: number; task: Partial<Task> }>
+  ): Promise<BatchUpdateResponse> => {
     return patch<BatchUpdateResponse>(`${API_CONFIG.ENDPOINTS.TASKS}/batch`, { updates });
   },
 
@@ -76,7 +78,7 @@ export const TaskAPI = {
   // Get tasks by label
   getTasksByLabel: (labelId: number): Promise<TaskListResponse> => {
     return get<TaskListResponse>(API_CONFIG.ENDPOINTS.TASKS, {
-      params: { labels: [labelId] }
+      params: { labels: [labelId] },
     });
-  }
+  },
 };

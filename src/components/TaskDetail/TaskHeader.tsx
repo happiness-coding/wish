@@ -12,7 +12,7 @@ import {
   MetaLabel,
   MetaValue,
   LabelsContainer,
-  LabelChip
+  LabelChip,
 } from './styles';
 
 interface TaskHeaderProps {

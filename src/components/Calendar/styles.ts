@@ -106,7 +106,12 @@ export const CalendarGrid = styled.div`
   min-height: 600px;
 `;
 
-export const Day = styled.div<{ $isCurrentMonth?: boolean; $isWeekend?: boolean; $isToday?: boolean; $isUnscheduledSection?: boolean }>`
+export const Day = styled.div<{
+  $isCurrentMonth?: boolean;
+  $isWeekend?: boolean;
+  $isToday?: boolean;
+  $isUnscheduledSection?: boolean;
+}>`
   border-right: 1px solid #edf2f7;
   border-bottom: 1px solid #edf2f7;
   min-height: 100px;
@@ -117,8 +122,8 @@ export const Day = styled.div<{ $isCurrentMonth?: boolean; $isWeekend?: boolean;
     if (props.$isToday) return '#ebf4ff';
     return 'white';
   }};
-  opacity: ${props => !props.$isCurrentMonth ? 0.6 : 1};
-  
+  opacity: ${props => (!props.$isCurrentMonth ? 0.6 : 1)};
+
   &:nth-child(7n) {
     border-right: none;
   }
@@ -130,9 +135,9 @@ export const DayNumber = styled.div<{ $isWeekend?: boolean; $isToday?: boolean }
   height: 1.75rem;
   line-height: 1.75rem;
   text-align: center;
-  font-weight: ${props => props.$isToday ? 600 : 400};
+  font-weight: ${props => (props.$isToday ? 600 : 400)};
   border-radius: 9999px;
-  background-color: ${props => props.$isToday ? '#3182ce' : 'transparent'};
+  background-color: ${props => (props.$isToday ? '#3182ce' : 'transparent')};
   color: ${props => {
     if (props.$isToday) return 'white';
     return props.$isWeekend ? '#e53e3e' : '#2d3748';
@@ -146,7 +151,11 @@ export const TaskList = styled.div`
   gap: 0.375rem;
 `;
 
-export const TaskItem = styled.div<{ $priority: 'low' | 'medium' | 'high'; $isCompleted: boolean; $isDragging: boolean }>`
+export const TaskItem = styled.div<{
+  $priority: 'low' | 'medium' | 'high';
+  $isCompleted: boolean;
+  $isDragging: boolean;
+}>`
   padding: 0.375rem 0.5rem;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -155,24 +164,24 @@ export const TaskItem = styled.div<{ $priority: 'low' | 'medium' | 'high'; $isCo
   overflow: hidden;
   text-overflow: ellipsis;
   user-select: none;
-  text-decoration: ${props => props.$isCompleted ? 'line-through' : 'none'};
-  opacity: ${props => props.$isCompleted ? 0.7 : 1};
-  box-shadow: ${props => props.$isDragging ? '0 5px 10px rgba(0, 0, 0, 0.15)' : 'none'};
-  
+  text-decoration: ${props => (props.$isCompleted ? 'line-through' : 'none')};
+  opacity: ${props => (props.$isCompleted ? 0.7 : 1)};
+  box-shadow: ${props => (props.$isDragging ? '0 5px 10px rgba(0, 0, 0, 0.15)' : 'none')};
+
   background-color: ${props => {
     const colors = {
       low: '#dcfce7',
       medium: '#fef9c3',
-      high: '#fee2e2'
+      high: '#fee2e2',
     };
     return colors[props.$priority];
   }};
-  
+
   color: ${props => {
     const colors = {
       low: '#16a34a',
       medium: '#ca8a04',
-      high: '#dc2626'
+      high: '#dc2626',
     };
     return colors[props.$priority];
   }};

@@ -2,7 +2,7 @@
 import { FC } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import styled from 'styled-components';
-import {DateFilter, LabelFilter} from '../../hooks/useTaskFilters.ts';
+import { DateFilter, LabelFilter } from '../../hooks/useTaskFilters.ts';
 
 const Container = styled.div`
   display: flex;
@@ -39,7 +39,7 @@ const RemoveButton = styled.button`
   cursor: pointer;
   padding: 2px;
   border-radius: 9999px;
-  
+
   &:hover {
     background-color: #f3f4f6;
   }
@@ -53,7 +53,7 @@ const ClearButton = styled.button`
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
   cursor: pointer;
-  
+
   &:hover {
     color: #4b5563;
     background-color: #f3f4f6;
@@ -73,17 +73,24 @@ export const ActiveFilters: FC<ActiveFiltersProps> = ({
   selectedLabels,
   onRemoveDateFilter,
   onRemoveLabelFilter,
-  onClearLabels
+  onClearLabels,
 }) => {
   const getDateFilterText = (filter: DateFilter) => {
-    switch(filter) {
-      case 'today': return 'Due Today';
-      case 'tomorrow': return 'Due Tomorrow';
-      case 'thisWeek': return 'Due This Week';
-      case 'nextWeek': return 'Due Next Week';
-      case 'overdue': return 'Overdue';
-      case 'noDueDate': return 'No Due Date';
-      default: return '';
+    switch (filter) {
+      case 'today':
+        return 'Due Today';
+      case 'tomorrow':
+        return 'Due Tomorrow';
+      case 'thisWeek':
+        return 'Due This Week';
+      case 'nextWeek':
+        return 'Due Next Week';
+      case 'overdue':
+        return 'Overdue';
+      case 'noDueDate':
+        return 'No Due Date';
+      default:
+        return '';
     }
   };
 
@@ -105,7 +112,11 @@ export const ActiveFilters: FC<ActiveFiltersProps> = ({
       {selectedLabels.map(label => (
         <Tag
           key={label.id}
-          style={{ backgroundColor: `${label.color}15`, color: label.color, borderColor: `${label.color}30` }}
+          style={{
+            backgroundColor: `${label.color}15`,
+            color: label.color,
+            borderColor: `${label.color}30`,
+          }}
         >
           <TagText>{label.name}</TagText>
           <RemoveButton onClick={() => onRemoveLabelFilter(label.id)}>
@@ -115,9 +126,7 @@ export const ActiveFilters: FC<ActiveFiltersProps> = ({
       ))}
 
       {selectedLabels.length > 0 && (
-        <ClearButton onClick={onClearLabels}>
-          Clear all labels
-        </ClearButton>
+        <ClearButton onClick={onClearLabels}>Clear all labels</ClearButton>
       )}
     </Container>
   );

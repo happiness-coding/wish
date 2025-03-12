@@ -23,7 +23,9 @@ export const TaskService = {
     }
   },
 
-  addTask: async (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>): Promise<Task | undefined> => {
+  addTask: async (
+    task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<Task | undefined> => {
     try {
       const response = await TaskAPI.addTask(task);
       return response.task;
@@ -43,7 +45,9 @@ export const TaskService = {
     }
   },
 
-  batchUpdateTasks: async (updates: Array<{ id: number, task: Partial<Task> }>): Promise<Task[]> => {
+  batchUpdateTasks: async (
+    updates: Array<{ id: number; task: Partial<Task> }>
+  ): Promise<Task[]> => {
     try {
       const response = await TaskAPI.batchUpdateTasks(updates);
       return response.tasks;
@@ -81,5 +85,5 @@ export const TaskService = {
       console.error(`Error getting tasks by label ${labelId}:`, error);
       return [];
     }
-  }
+  },
 };

@@ -21,14 +21,14 @@ export const StyledNavLink = styled(NavLink)`
   text-decoration: none;
   padding: 0.5rem 0;
   position: relative;
-  
+
   &:hover {
     color: #4f46e5;
   }
-  
+
   &.active {
     color: #4f46e5;
-    
+
     &::after {
       content: '';
       position: absolute;

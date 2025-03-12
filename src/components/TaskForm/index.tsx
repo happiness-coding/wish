@@ -34,7 +34,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
     dueDate: '',
     priority: 'medium',
     labels: [],
-    isCompleted: false
+    isCompleted: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -56,7 +56,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
               dueDate: task.dueDate ? task.dueDate.toISOString().split('T')[0] : '',
               priority: task.priority,
               labels: task.labels,
-              isCompleted: task.isCompleted
+              isCompleted: task.isCompleted,
             });
           } else {
             setFormError('Task not found');
@@ -85,7 +85,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
         // Update existing task
         const updatedTask = await TaskService.updateTask(taskId, {
           ...formData,
-          dueDate: formData.dueDate ? new Date(formData.dueDate) : null
+          dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
         });
         if (updatedTask) {
           onSubmitSuccess();
@@ -94,7 +94,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
         // Create new task
         const newTask = await TaskService.addTask({
           ...formData,
-          dueDate: formData.dueDate ? new Date(formData.dueDate) : null
+          dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
         });
         if (newTask) {
           onSubmitSuccess();
@@ -215,10 +215,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
 
         <FormGroup>
           <label>Labels</label>
-          <LabelSelector
-            selectedLabels={formData.labels}
-            onChange={handleLabelsChange}
-          />
+          <LabelSelector selectedLabels={formData.labels} onChange={handleLabelsChange} />
         </FormGroup>
 
         <FormActions>
@@ -230,11 +227,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={loading || fetchingTask}
-          >
+          <Button type="submit" variant="primary" disabled={loading || fetchingTask}>
             {loading ? 'Saving...' : isEditMode ? 'Update Task' : 'Create Task'}
           </Button>
         </FormActions>

@@ -10,16 +10,15 @@ interface ModalProps {
   showCloseButton?: boolean;
 }
 
-export const Modal: FC<ModalProps> = ({
-  children,
-  onClose,
-  showCloseButton = true
-}) => {
-  const handleEscapeKey = useCallback((event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      onClose();
-    }
-  }, [onClose]);
+export const Modal: FC<ModalProps> = ({ children, onClose, showCloseButton = true }) => {
+  const handleEscapeKey = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    },
+    [onClose]
+  );
 
   useEffect(() => {
     document.addEventListener('keydown', handleEscapeKey);

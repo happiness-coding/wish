@@ -13,7 +13,7 @@ export interface SortState {
 export const useTaskSort = () => {
   const [sort, setSort] = useState<SortState>({
     field: 'createdAt',
-    direction: 'desc'
+    direction: 'desc',
   });
 
   const handleSortChange = (field: SortField) => {

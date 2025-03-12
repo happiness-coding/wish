@@ -55,7 +55,7 @@ export const TaskHeader = styled.div<{ priority: 'low' | 'medium' | 'high' }>`
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -64,11 +64,15 @@ export const TaskHeader = styled.div<{ priority: 'low' | 'medium' | 'high' }>`
     right: 0;
     height: 8px;
     background-color: ${props => {
-      switch(props.priority) {
-        case 'high': return '#ef4444';
-        case 'medium': return '#f59e0b';
-        case 'low': return '#10b981';
-        default: return '#a3a3a3';
+      switch (props.priority) {
+        case 'high':
+          return '#ef4444';
+        case 'medium':
+          return '#f59e0b';
+        case 'low':
+          return '#10b981';
+        default:
+          return '#a3a3a3';
       }
     }};
   }
@@ -84,8 +88,8 @@ export const Title = styled.h1<{ isCompleted: boolean }>`
   font-weight: 700;
   color: #1a202c;
   margin-bottom: 1rem;
-  text-decoration: ${props => props.isCompleted ? 'line-through' : 'none'};
-  opacity: ${props => props.isCompleted ? 0.7 : 1};
+  text-decoration: ${props => (props.isCompleted ? 'line-through' : 'none')};
+  opacity: ${props => (props.isCompleted ? 0.7 : 1)};
 `;
 
 export const StatusBadge = styled.div<{ isCompleted: boolean }>`
@@ -95,8 +99,8 @@ export const StatusBadge = styled.div<{ isCompleted: boolean }>`
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
-  background-color: ${props => props.isCompleted ? '#C6F6D5' : '#E9D8FD'};
-  color: ${props => props.isCompleted ? '#2F855A' : '#6B46C1'};
+  background-color: ${props => (props.isCompleted ? '#C6F6D5' : '#E9D8FD')};
+  color: ${props => (props.isCompleted ? '#2F855A' : '#6B46C1')};
 `;
 
 export const MetaContainer = styled.div`
@@ -122,7 +126,7 @@ export const MetaLabel = styled.div`
 export const MetaValue = styled.div<{ accent?: boolean }>`
   font-size: 0.95rem;
   font-weight: 600;
-  color: ${props => props.accent ? '#ef4444' : '#2d3748'};
+  color: ${props => (props.accent ? '#ef4444' : '#2d3748')};
 `;
 
 export const Description = styled.div`
@@ -145,8 +149,8 @@ export const DescriptionText = styled.div<{ isCompleted: boolean }>`
   line-height: 1.8;
   white-space: pre-wrap;
   font-size: 1rem;
-  text-decoration: ${props => props.isCompleted ? 'line-through' : 'none'};
-  opacity: ${props => props.isCompleted ? 0.7 : 1};
+  text-decoration: ${props => (props.isCompleted ? 'line-through' : 'none')};
+  opacity: ${props => (props.isCompleted ? 0.7 : 1)};
 `;
 
 export const ActionBar = styled.div`
@@ -156,7 +160,7 @@ export const ActionBar = styled.div`
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  
+
   @media (max-width: 640px) {
     flex-direction: column;
     align-items: stretch;
@@ -178,7 +182,7 @@ export const ActionButton = styled.button<{ variant?: string }>`
 
   background-color: ${props => {
     if (props.variant === 'delete') return '#FED7D7';
-    if (props.variant === 'edit') return '#E2E8F0'; 
+    if (props.variant === 'edit') return '#E2E8F0';
     if (props.variant === 'complete') return props.disabled ? '#E2E8F0' : '#C6F6D5';
     return '#E2E8F0';
   }};
@@ -198,7 +202,7 @@ export const ActionButton = styled.button<{ variant?: string }>`
       return '#CBD5E0';
     }};
   }
-  
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.7;
