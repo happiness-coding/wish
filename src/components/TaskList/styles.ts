@@ -26,14 +26,6 @@ export const ListHeader = styled.div`
   }
 `;
 
-export const HeaderContent = styled.div`
-  margin-bottom: 1.5rem;
-
-  @media (min-width: 768px) {
-    margin-bottom: 0;
-  }
-`;
-
 export const LabelsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -65,27 +57,6 @@ export const Subtitle = styled.p`
   max-width: 500px;
 `;
 
-export const AddButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.5rem;
-  background-color: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
-
-  &:hover {
-    background-color: #4338ca;
-    transform: translateY(-1px);
-  }
-`;
 
 export const FilterBar = styled.div`
   display: flex;
@@ -97,6 +68,7 @@ export const FilterBar = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 `;
+
 
 export const FilterButton = styled.button<{ $active: boolean }>`
   padding: 0.5rem 1rem;
@@ -180,35 +152,6 @@ export const PriorityLabel = styled.div<{ $priority: 'low' | 'medium' | 'high' }
   margin-bottom: 0.75rem;
 `;
 
-export const Title = styled.h3<{ $isCompleted: boolean }>`
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-  color: #1a202c;
-  line-height: 1.4;
-  text-decoration: ${props => props.$isCompleted ? 'line-through' : 'none'};
-  opacity: ${props => props.$isCompleted ? 0.7 : 1};
-
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-`;
-
-export const Description = styled.div<{ $isCompleted: boolean }>`
-  color: #4a5568;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  flex-grow: 1;
-  text-decoration: ${props => props.$isCompleted ? 'line-through' : 'none'};
-  opacity: ${props => props.$isCompleted ? 0.7 : 1};
-
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-`;
 
 export const Meta = styled.div`
   display: flex;
@@ -311,6 +254,66 @@ export const EmptyStateText = styled.p`
   margin-bottom: 2rem;
 `;
 
+export const AddButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #4338ca;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
 export const EmptyStateButton = styled(AddButton)`
   margin: 0 auto;
 `;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+`;
+
+export const HeaderContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+export const Title = styled.h1`
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+`;
+
+export const Description = styled.p`
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin: 0;
+`;
+
+export const HeaderActions = styled.div`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+`;
+

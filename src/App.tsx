@@ -26,7 +26,7 @@ function App() {
           </Routes>
         </main>
         <footer>
-          <p>© 2024 Task Manager</p>
+          <p>© 2025nvbinhsoft</p>
         </footer>
       </div>
     </BrowserRouter>

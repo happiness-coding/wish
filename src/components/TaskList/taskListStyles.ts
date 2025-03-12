@@ -4,14 +4,18 @@ import styled from 'styled-components';
 export const TaskListContainer = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 1rem;
   }
 `;
+
 
 export const TaskItem = styled.div<{ $completed?: boolean }>`
   display: flex;
@@ -30,9 +34,11 @@ export const TaskItem = styled.div<{ $completed?: boolean }>`
 `;
 
 export const PageContainer = styled.div`
-  min-height: calc(100vh - 120px); // Adjust for header/footer
+  min-height: calc(100vh - 120px); // Account for header/footer
   width: 100%;
   background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+  padding: 1.5rem;
+  overflow-x: hidden; // Prevent horizontal scroll
 `;
 
 export const TaskContent = styled.div`
@@ -64,20 +70,17 @@ export const TaskActions = styled.div`
 
 export const Container = styled.div`
   width: 100%;
-  height: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  padding: 2rem;
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
+  gap: 1rem;
 
   &.loading {
     opacity: 0.7;
     pointer-events: none;
   }
 `;
+
 
 export const Header = styled.div`
   width: 100%;
@@ -100,11 +103,11 @@ export const Header = styled.div`
 
 export const TaskCard = styled.div<{ $completed?: boolean; $priority: string }>`
   background: white;
-  border-radius: 16px;
+  border-radius: 12px;
   border: 1px solid #e5e7eb;
   display: flex;
-  align-items: flex-start;
-  padding: 1.5rem;
+  flex-direction: column;
+  padding: 1rem;
   transition: all 0.2s ease-in-out;
   opacity: ${props => props.$completed ? 0.7 : 1};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -113,24 +116,7 @@ export const TaskCard = styled.div<{ $completed?: boolean; $priority: string }>`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  }
-
-  ${props => props.$priority === 'high' && `
-    border-left: 4px solid #dc2626;
-    background: linear-gradient(to right, rgba(220, 38, 38, 0.03), white 25%);
-  `}
-  ${props => props.$priority === 'medium' && `
-    border-left: 4px solid #f59e0b;
-    background: linear-gradient(to right, rgba(245, 158, 11, 0.03), white 25%);
-  `}
-  ${props => props.$priority === 'low' && `
-    border-left: 4px solid #10b981;
-    background: linear-gradient(to right, rgba(16, 185, 129, 0.03), white 25%);
-  `}
-
-  @media (max-width: 768px) {
-    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 `;
 
