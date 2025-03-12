@@ -1,47 +1,58 @@
-// src/components/Calendar/index.tsx
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   startOfMonth,
   endOfMonth,
+  startOfWeek,
+  endOfWeek,
   eachDayOfInterval,
   addMonths,
-  subMonths
+  subMonths,
+  isSameDay
 } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
-import { Task } from '../../models/Task';
+import { DragDropContext } from '@hello-pangea/dnd';
 import { TaskService } from '../../services/TaskService';
+import type { Task } from '../../models/Task';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { CalendarContainer } from './styles';
+import { Modal } from '../Modal';
+import { TaskForm } from '../TaskForm';
+import { DropResult } from '@hello-pangea/dnd';
+
 
 export const Calendar: FC = () => {
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [tasks, setTasks] = useState<Task[]>([]);
-  const navigate = useNavigate();
+  const [calendarDays, setCalendarDays] = useState<Date[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+    useNavigate();
+// Generate calendar days for the current month
+  const generateCalendarDays = useCallback((date: Date) => {
+    const monthStart = startOfMonth(date);
+    const monthEnd = endOfMonth(date);
+    const calendarStart = startOfWeek(monthStart);
+    const calendarEnd = endOfWeek(monthEnd);
 
-  useEffect(() => {
-    const allTasks = TaskService.listTasks();
-    setTasks(allTasks);
+    return eachDayOfInterval({
+      start: calendarStart,
+      end: calendarEnd
+    });
   }, []);
 
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  const dateRange = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  // Fetch tasks
+  useEffect(() => {
+    const fetchTasks = () => {
+      const allTasks = TaskService.listTasks();
+      setTasks(allTasks);
+    };
 
-  // Add days from the previous month to start from Sunday
-  const startDay = monthStart.getDay(); // 0 for Sunday, 1 for Monday, etc.
-  const daysFromPreviousMonth = Array.from({ length: startDay }, (_, i) =>
-    new Date(monthStart.getFullYear(), monthStart.getMonth(), -i)
-  ).reverse();
+    fetchTasks();
+    setCalendarDays(generateCalendarDays(currentDate));
+  }, [currentDate, generateCalendarDays]);
 
-  // Add days from the next month to end on Saturday
-  const endDay = monthEnd.getDay(); // 0 for Sunday, 1 for Monday, etc.
-  const daysFromNextMonth = Array.from({ length: 6 - endDay }, (_, i) =>
-    new Date(monthEnd.getFullYear(), monthEnd.getMonth() + 1, i + 1)
-  );
-
-  const days = [...daysFromPreviousMonth, ...dateRange, ...daysFromNextMonth];
-
+  // Handle month navigation
   const handlePrevMonth = () => {
     setCurrentDate(prevDate => subMonths(prevDate, 1));
   };
@@ -54,9 +65,59 @@ export const Calendar: FC = () => {
     setCurrentDate(new Date());
   };
 
+  // Handle task click to edit
   const handleTaskClick = (taskId: number) => {
-    navigate(`/tasks/${taskId}`);
+    setSelectedTaskId(taskId);
+    setIsModalOpen(true);
   };
+
+  // Handle drag and drop
+    const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const { draggableId, destination } = result;
+    const taskId = parseInt(draggableId.split('-')[1]);
+    const newDate = new Date(destination.droppableId);
+
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    // Update the task due date
+    const updatedTask = {
+      ...task,
+      dueDate: newDate
+    };
+
+    TaskService.updateTask(taskId, updatedTask);
+
+    // Update local state
+    setTasks(prevTasks =>
+      prevTasks.map(t => t.id === taskId ? { ...t, dueDate: newDate } : t)
+    );
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTaskId(null);
+  };
+
+  const handleTaskUpdateSuccess = () => {
+    // Refresh tasks
+    const updatedTasks = TaskService.listTasks();
+    setTasks(updatedTasks);
+    setIsModalOpen(false);
+    setSelectedTaskId(null);
+  };
+
+  const getTasksForDate = useCallback((date: Date): Task[] => {
+    return tasks.filter(task =>
+      task.dueDate &&
+      isSameDay(new Date(task.dueDate), date)
+    );
+  }, [tasks]);
+
+  // Unscheduled tasks (tasks without due date)
+  const unscheduledTasks = tasks.filter(task => !task.dueDate);
 
   return (
     <CalendarContainer>
@@ -66,12 +127,27 @@ export const Calendar: FC = () => {
         onNextMonth={handleNextMonth}
         onToday={handleToday}
       />
-      <CalendarGrid
-        days={days}
-        currentDate={currentDate}
-        tasks={tasks}
-        onTaskClick={handleTaskClick}
-      />
+
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <CalendarGrid
+          days={calendarDays}
+          currentDate={currentDate}
+          tasks={tasks}
+          onTaskClick={handleTaskClick}
+          getTasksForDate={getTasksForDate}
+          unscheduledTasks={unscheduledTasks}
+        />
+      </DragDropContext>
+
+      {isModalOpen && selectedTaskId && (
+        <Modal onClose={handleCloseModal}>
+          <TaskForm
+            taskId={selectedTaskId}
+            onSubmitSuccess={handleTaskUpdateSuccess}
+            onCancel={handleCloseModal}
+          />
+        </Modal>
+      )}
     </CalendarContainer>
   );
 };

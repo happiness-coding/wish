@@ -1,4 +1,4 @@
-// src/components/TaskList/index.tsx
+// src/components/TaskList/index.tsx.tsx
 import { FC } from 'react';
 import { Task } from '../../models/Task';
 import { TaskCard } from './TaskCard';

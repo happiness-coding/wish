@@ -1,4 +1,4 @@
-// src/components/Navbar/index.tsx
+// src/components/Navbar/index.tsx.tsx
 import { FC } from 'react';
 import {
   NavbarContainer,
