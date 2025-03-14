@@ -175,7 +175,7 @@ export const FormActions = styled.div`
   border-top: 1px solid #edf2f7;
 `;
 
-export const Button = styled.button<{ variant?: string }>`
+export const Button = styled.button<{ $variant?: string }>`
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
   font-weight: 600;
@@ -183,12 +183,12 @@ export const Button = styled.button<{ variant?: string }>`
   cursor: pointer;
   transition: all 0.2s ease;
 
-  background-color: ${props => (props.variant === 'primary' ? '#4f46e5' : 'transparent')};
-  color: ${props => (props.variant === 'primary' ? 'white' : '#4a5568')};
-  border: ${props => (props.variant === 'primary' ? 'none' : '1px solid #e2e8f0')};
+  background-color: ${props => (props.$variant === 'primary' ? '#4f46e5' : 'transparent')};
+  color: ${props => (props.$variant === 'primary' ? 'white' : '#4a5568')};
+  border: ${props => (props.$variant === 'primary' ? 'none' : '1px solid #e2e8f0')};
 
   &:hover {
-    background-color: ${props => (props.variant === 'primary' ? '#4338ca' : '#f7fafc')};
+    background-color: ${props => (props.$variant === 'primary' ? '#4338ca' : '#f7fafc')};
   }
 
   &:disabled {

@@ -34,6 +34,22 @@ const ErrorMessage: FC<ErrorMessageProps> = ({ message, onRetry }) => (
   </div>
 );
 
+// Define an interface that matches the API spec exactly
+interface TaskQueryParams {
+  page?: number;
+  limit?: number;
+  status?: 'all' | 'active' | 'completed';
+  priority?: 'low' | 'medium' | 'high';
+  labels?: number[];
+  dateRange?: {
+    start?: string;
+    end?: string;
+  };
+  search?: string;
+  sortBy?: 'dueDate' | 'priority' | 'createdAt';
+  sortOrder?: 'asc' | 'desc';
+}
+
 export const TaskListPage: FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,24 +57,6 @@ export const TaskListPage: FC = () => {
   const [filtersExpanded, setFiltersExpanded] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
-    setLoading(true);
-    try {
-      const fetchedTasks = await TaskService.listTasks();
-      setTasks(fetchedTasks);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load tasks. Please try again later.');
-      console.error('Error fetching tasks:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const {
     filter,
@@ -70,6 +68,86 @@ export const TaskListPage: FC = () => {
     hasActiveFilters,
   } = useTaskFilters(tasks);
   const { sort, handleSortChange, sortTasks } = useTaskSort();
+
+  const fetchTasks = async () => {
+    setLoading(true);
+    try {
+      // Build query parameters based on current filters
+      const params: TaskQueryParams = {};
+
+      // Status filter
+      if (filter.status === 'active') {
+        params.status = 'active';
+      } else if (filter.status === 'completed') {
+        params.status = 'completed';
+      }
+
+      // Labels filter
+      if (filter.labels && filter.labels.length > 0) {
+        params.labels = filter.labels;
+      }
+
+      // Date range filter - Convert string dateRange values to object format
+      if (filter.dateRange !== 'all') {
+        const today = new Date();
+
+        if (filter.dateRange === 'today') {
+          // Set start and end to today
+          const dateStr = today.toISOString().split('T')[0];
+          params.dateRange = {
+            start: dateStr,
+            end: dateStr,
+          };
+        } else if (filter.dateRange === 'thisWeek') {
+          // Get start of week (Sunday) and end of week (Saturday)
+          const startOfWeek = new Date(today);
+          startOfWeek.setDate(today.getDate() - today.getDay());
+          const endOfWeek = new Date(today);
+          endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+          params.dateRange = {
+            start: startOfWeek.toISOString().split('T')[0],
+            end: endOfWeek.toISOString().split('T')[0],
+          };
+        }
+        // Note: 'noDueDate' would need special handling on the server
+        // or we can exclude it from the API request as it's a UI-specific filter
+      }
+
+      // Sort parameters - Map any mismatched field names
+      if (sort.field) {
+        // Handle field name mapping if needed
+        let sortField: 'dueDate' | 'priority' | 'createdAt';
+
+        if (sort.field === 'created') {
+          sortField = 'createdAt';
+        } else {
+          // Only allow valid values when casting
+          if (sort.field === 'dueDate' || sort.field === 'priority' || sort.field === 'createdAt') {
+            sortField = sort.field;
+          } else {
+            sortField = 'createdAt'; // Default value
+          }
+        }
+
+        params.sortBy = sortField;
+        params.sortOrder = sort.direction as 'asc' | 'desc';
+      }
+
+      const fetchedTasks = await TaskService.listTasks(params);
+      setTasks(fetchedTasks);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load tasks. Please try again later.');
+      console.error('Error fetching tasks:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, [filter.status, filter.labels, filter.dateRange, sort.field, sort.direction]);
 
   const handleAddTask = () => {
     setSelectedTaskId(null);

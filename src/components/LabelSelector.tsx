@@ -98,17 +98,17 @@ const Dropdown = styled.div<{ show: boolean }>`
   display: ${props => (props.show ? 'block' : 'none')};
 `;
 
-const LabelOption = styled.div<{ isSelected: boolean; color: string }>`
+const LabelOption = styled.div<{ $isSelected: boolean; color: string }>`
   display: flex;
   align-items: center;
   padding: 0.625rem 0.75rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
 
-  background-color: ${props => (props.isSelected ? `${props.color}10` : 'transparent')};
+  background-color: ${props => (props.$isSelected ? `${props.color}10` : 'transparent')};
 
   &:hover {
-    background-color: ${props => (props.isSelected ? `${props.color}20` : '#f7fafc')};
+    background-color: ${props => (props.$isSelected ? `${props.color}20` : '#f7fafc')};
   }
 `;
 
@@ -203,6 +203,17 @@ interface LabelSelectorProps {
   selectedLabels: Label[];
   onChange: (labels: Label[]) => void;
 }
+
+interface LabelItemProps {
+  isSelected?: boolean;
+  // Add other custom props here
+}
+
+const LabelItem = styled.div<LabelItemProps>`
+  /* Your styles */
+  background-color: ${props => (props.$isSelected ? 'lightblue' : 'transparent')};
+  /* Other styles based on $isSelected */
+`;
 
 export const LabelSelector: FC<LabelSelectorProps> = ({ selectedLabels, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -321,7 +332,7 @@ export const LabelSelector: FC<LabelSelectorProps> = ({ selectedLabels, onChange
           filteredLabels.map(label => (
             <LabelOption
               key={label.id}
-              isSelected={isSelected(label)}
+              $isSelected={isSelected(label)}
               color={label.color}
               onClick={() => handleSelectLabel(label)}
             >

@@ -73,22 +73,22 @@ export const TaskCard: FC<TaskCardProps> = ({
       </Content>
 
       <Actions>
-        <ActionButton onClick={() => onToggleComplete(task.id)} variant="complete">
+        <ActionButton onClick={() => onToggleComplete(task.id)} $variant="complete">
           <IconWrapper>
             <CheckIcon />
           </IconWrapper>
         </ActionButton>
-        <ActionButton onClick={() => onView(task.id)} variant="view">
+        <ActionButton onClick={() => onView(task.id)} $variant="view">
           <IconWrapper>
             <EyeIcon />
           </IconWrapper>
         </ActionButton>
-        <ActionButton onClick={() => onEdit(task.id)} variant="edit">
+        <ActionButton onClick={() => onEdit(task.id)} $variant="edit">
           <IconWrapper>
             <PencilIcon />
           </IconWrapper>
         </ActionButton>
-        <ActionButton onClick={() => onDelete(task.id)} variant="delete">
+        <ActionButton onClick={() => onDelete(task.id)} $variant="delete">
           <IconWrapper>
             <TrashIcon />
           </IconWrapper>

@@ -187,7 +187,7 @@ export const Actions = styled.div`
   justify-content: space-between;
 `;
 
-export const ActionButton = styled.button<{ variant?: string }>`
+export const ActionButton = styled.button<{ $variant?: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -202,7 +202,7 @@ export const ActionButton = styled.button<{ variant?: string }>`
   height: 2rem;
 
   background-color: ${props => {
-    switch (props.variant) {
+    switch (props.$variant) {
       case 'delete':
         return '#FED7D7';
       case 'edit':
@@ -217,7 +217,7 @@ export const ActionButton = styled.button<{ variant?: string }>`
   }};
 
   color: ${props => {
-    switch (props.variant) {
+    switch (props.$variant) {
       case 'delete':
         return '#E53E3E';
       case 'edit':
@@ -233,7 +233,7 @@ export const ActionButton = styled.button<{ variant?: string }>`
 
   &:hover {
     background-color: ${props => {
-      switch (props.variant) {
+      switch (props.$variant) {
         case 'delete':
           return '#FEB2B2';
         case 'edit':

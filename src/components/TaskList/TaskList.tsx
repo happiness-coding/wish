@@ -1,4 +1,4 @@
-// src/components/TaskList/TaskList.tsx
+// src/components/TaskList/TaskList.tsx - Modified version
 import { FC } from 'react';
 import { Task } from '../../models/Task';
 import { format } from 'date-fns';
@@ -21,6 +21,8 @@ import {
   MetaItem,
   PageContainer,
   TaskListContainer,
+  FilterBar,
+  FilterButton,
 } from './taskListStyles';
 
 interface TaskListProps {
@@ -30,6 +32,8 @@ interface TaskListProps {
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
   onToggleComplete: (id: number) => void;
+  onFilterChange?: (filter: string) => void;
+  currentFilter?: string;
 }
 
 export const TaskList: FC<TaskListProps> = ({
@@ -39,10 +43,33 @@ export const TaskList: FC<TaskListProps> = ({
   onEdit,
   onDelete,
   onToggleComplete,
+  onFilterChange,
+  currentFilter = 'all',
 }) => {
   return (
     <PageContainer>
       <Container className={isLoading ? 'loading' : ''}>
+        <FilterBar>
+          <FilterButton
+            $active={currentFilter === 'all'}
+            onClick={() => onFilterChange && onFilterChange('all')}
+          >
+            All
+          </FilterButton>
+          <FilterButton
+            $active={currentFilter === 'active'}
+            onClick={() => onFilterChange && onFilterChange('active')}
+          >
+            Active
+          </FilterButton>
+          <FilterButton
+            $active={currentFilter === 'completed'}
+            onClick={() => onFilterChange && onFilterChange('completed')}
+          >
+            Completed
+          </FilterButton>
+        </FilterBar>
+
         <TaskListContainer>
           {tasks.length === 0 ? (
             <EmptyState>

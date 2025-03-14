@@ -167,7 +167,7 @@ export const ActionBar = styled.div`
   }
 `;
 
-export const ActionButton = styled.button<{ variant?: string }>`
+export const ActionButton = styled.button<{ $variant?: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -181,24 +181,24 @@ export const ActionButton = styled.button<{ variant?: string }>`
   transition: all 0.2s ease;
 
   background-color: ${props => {
-    if (props.variant === 'delete') return '#FED7D7';
-    if (props.variant === 'edit') return '#E2E8F0';
-    if (props.variant === 'complete') return props.disabled ? '#E2E8F0' : '#C6F6D5';
+    if (props.$variant === 'delete') return '#FED7D7';
+    if (props.$variant === 'edit') return '#E2E8F0';
+    if (props.$variant === 'complete') return props.disabled ? '#E2E8F0' : '#C6F6D5';
     return '#E2E8F0';
   }};
 
   color: ${props => {
-    if (props.variant === 'delete') return '#E53E3E';
-    if (props.variant === 'edit') return '#4A5568';
-    if (props.variant === 'complete') return props.disabled ? '#A0AEC0' : '#2F855A';
+    if (props.$variant === 'delete') return '#E53E3E';
+    if (props.$variant === 'edit') return '#4A5568';
+    if (props.$variant === 'complete') return props.disabled ? '#A0AEC0' : '#2F855A';
     return '#4A5568';
   }};
 
   &:hover {
     background-color: ${props => {
-      if (props.variant === 'delete') return '#FEB2B2';
-      if (props.variant === 'edit') return '#CBD5E0';
-      if (props.variant === 'complete') return props.disabled ? '#E2E8F0' : '#9AE6B4';
+      if (props.$variant === 'delete') return '#FEB2B2';
+      if (props.$variant === 'edit') return '#CBD5E0';
+      if (props.$variant === 'complete') return props.disabled ? '#E2E8F0' : '#9AE6B4';
       return '#CBD5E0';
     }};
   }

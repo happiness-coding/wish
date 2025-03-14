@@ -188,7 +188,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
           <div className="priority-buttons">
             <Button
               type="button"
-              variant={formData.priority === 'low' ? 'selected' : 'default'}
+              $variant={formData.priority === 'low' ? 'selected' : 'default'}
               onClick={() => handlePriorityChange('low')}
               disabled={fetchingTask || loading}
             >
@@ -196,7 +196,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
             </Button>
             <Button
               type="button"
-              variant={formData.priority === 'medium' ? 'selected' : 'default'}
+              $variant={formData.priority === 'medium' ? 'selected' : 'default'}
               onClick={() => handlePriorityChange('medium')}
               disabled={fetchingTask || loading}
             >
@@ -204,7 +204,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
             </Button>
             <Button
               type="button"
-              variant={formData.priority === 'high' ? 'selected' : 'default'}
+              $variant={formData.priority === 'high' ? 'selected' : 'default'}
               onClick={() => handlePriorityChange('high')}
               disabled={fetchingTask || loading}
             >
@@ -221,13 +221,13 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
         <FormActions>
           <Button
             type="button"
-            variant="secondary"
+            $variant="secondary"
             onClick={onCancel}
             disabled={loading || fetchingTask}
           >
             Cancel
           </Button>
-          <Button type="submit" variant="primary" disabled={loading || fetchingTask}>
+          <Button type="submit" $variant="primary" disabled={loading || fetchingTask}>
             {loading ? 'Saving...' : isEditMode ? 'Update Task' : 'Create Task'}
           </Button>
         </FormActions>

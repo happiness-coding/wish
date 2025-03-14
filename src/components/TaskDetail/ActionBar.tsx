@@ -17,19 +17,19 @@ export const ActionBar: FC<ActionBarProps> = ({
 }) => {
   return (
     <StyledActionBar>
-      <ActionButton variant="complete" onClick={onToggleComplete}>
+      <ActionButton $variant="complete" onClick={onToggleComplete}>
         <IconWrapper>
           <CheckIcon />
         </IconWrapper>
         {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
       </ActionButton>
-      <ActionButton variant="edit" onClick={onEdit}>
+      <ActionButton $variant="edit" onClick={onEdit}>
         <IconWrapper>
           <PencilIcon />
         </IconWrapper>
         Edit Task
       </ActionButton>
-      <ActionButton variant="delete" onClick={onDelete}>
+      <ActionButton $variant="delete" onClick={onDelete}>
         <IconWrapper>
           <TrashIcon />
         </IconWrapper>

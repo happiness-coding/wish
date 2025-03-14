@@ -2,14 +2,29 @@
 import { Task } from '../models/Task';
 import { TaskAPI } from '../api/taskApi';
 
+interface TaskListParams {
+  page?: number;
+  limit?: number;
+  status?: 'all' | 'active' | 'completed';
+  priority?: 'low' | 'medium' | 'high';
+  labels?: number[];
+  dateRange?: {
+    start?: string;
+    end?: string;
+  };
+  search?: string;
+  sortBy?: 'dueDate' | 'priority' | 'createdAt';
+  sortOrder?: 'asc' | 'desc';
+}
+
 export const TaskService = {
-  listTasks: async (): Promise<Task[]> => {
+  listTasks: async (params?: TaskListParams) => {
     try {
-      const response = await TaskAPI.listTasks();
-      return response.tasks;
+      const response = await TaskAPI.listTasks(params);
+      return response.tasks || [];
     } catch (error) {
       console.error('Error listing tasks:', error);
-      return [];
+      throw error;
     }
   },
 
