@@ -28,7 +28,7 @@ export interface FilterState {
 
 export const useTaskFilters = (allTasks: Task[]) => {
   const [filter, setFilter] = useState<FilterState>({
-    status: 'all',
+    status: 'active',
     labels: [],
     dateRange: 'all',
   });

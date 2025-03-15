@@ -76,8 +76,8 @@ export const TaskListPage: FC = () => {
       const params: TaskQueryParams = {};
 
       // Status filter
-      if (filter.status === 'active') {
-        params.status = 'active';
+      if (filter.status === 'all') {
+        params.status = 'all';
       } else if (filter.status === 'completed') {
         params.status = 'completed';
       }
@@ -178,9 +178,12 @@ export const TaskListPage: FC = () => {
 
   const handleToggleComplete = async (taskId: number) => {
     try {
+      // debugger;
       const updatedTask = await TaskService.toggleComplete(taskId);
       if (updatedTask) {
-        setTasks(prevTasks => prevTasks.map(task => (task.id === taskId ? updatedTask : task)));
+        setTasks(currentTasks =>
+          currentTasks.map(task => (task.id === taskId ? { ...task, isCompleted: true } : task))
+        );
       }
     } catch (err) {
       setError('Failed to update task status. Please try again.');

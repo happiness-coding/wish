@@ -59,7 +59,7 @@ const FilterToggleButton = styled.button<{ $hasActiveFilters: boolean }>`
 
 interface QuickFilterBarProps {
   status: string;
-  onStatusChange: (status: 'all' | 'active' | 'completed') => void;
+  onStatusChange: (status: 'active' | 'completed' | 'all') => void;
   onToggleFilters: () => void;
   filtersExpanded: boolean;
   hasActiveFilters: boolean;
