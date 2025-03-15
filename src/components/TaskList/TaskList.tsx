@@ -21,9 +21,13 @@ import {
   MetaItem,
   PageContainer,
   TaskListContainer,
+} from './taskListStyles';
+
+import {
+  // other imports
   FilterBar,
   FilterButton,
-} from './taskListStyles';
+} from './styles';
 
 interface TaskListProps {
   tasks: Task[];

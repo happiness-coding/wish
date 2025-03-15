@@ -1,131 +1,99 @@
 import { FC, useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { Label } from '../../models/Task';
 import { TaskService } from '../../services/TaskService';
-import type { Label as LabelType } from '../../models/Task';
+import { LabelService } from '../../services/LabelService';
+import { FormFields } from './FormFields';
 import { LabelSelector } from '../LabelSelector';
 import {
+  FormContainer,
+  BackLink,
+  IconWrapper,
   FormCard,
   FormHeader,
   FormTitle,
   StyledForm,
-  FormGroup,
   FormActions,
   Button,
+  StatusIndicator,
+  FormSection,
+  FormDivider,
 } from './styles';
-
-interface FormData {
-  title: string;
-  description: string;
-  dueDate: string;
-  priority: 'low' | 'medium' | 'high';
-  labels: LabelType[];
-  isCompleted: boolean;
-}
 
 interface TaskFormProps {
   taskId?: number;
+  onBack?: () => void;
   onSubmitSuccess: () => void;
   onCancel: () => void;
 }
 
-export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel }) => {
-  const [formData, setFormData] = useState<FormData>({
+export const TaskForm: FC<TaskFormProps> = ({ taskId, onBack, onSubmitSuccess, onCancel }) => {
+  const [formData, setFormData] = useState({
     title: '',
     description: '',
     dueDate: '',
-    priority: 'medium',
-    labels: [],
+    priority: 'medium' as 'low' | 'medium' | 'high',
     isCompleted: false,
+    labels: [] as Label[],
   });
 
-  const [loading, setLoading] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-  const [fetchingTask, setFetchingTask] = useState(!!taskId);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const isEditMode = !!taskId;
+  const [loading, setLoading] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [, setAvailableLabels] = useState<Label[]>([]);
+  const isEditMode = taskId !== undefined;
 
-  // Fetch task if in edit mode
+  // Fetch labels
   useEffect(() => {
-    const fetchTask = async () => {
-      if (taskId) {
-        try {
-          const task = await TaskService.getTask(taskId);
+    const labels = LabelService.listLabels();
+    setAvailableLabels(labels);
+  }, []);
+
+  // Fetch task data if in edit mode
+  useEffect(() => {
+    if (isEditMode && taskId) {
+      setLoading(true);
+      TaskService.getTask(taskId)
+        .then(task => {
           if (task) {
             setFormData({
               title: task.title,
               description: task.description,
-              dueDate: task.dueDate ? new Date(task.dueDate).toString() : new Date().toString(),
+              dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
               priority: task.priority,
-              labels: task.labels,
               isCompleted: task.isCompleted,
+              labels: task.labels || [],
             });
-          } else {
-            setFormError('Task not found');
           }
-        } catch (err) {
-          setFormError('Error loading task');
+        })
+        .catch(err => {
           console.error('Error fetching task:', err);
-        } finally {
-          setFetchingTask(false);
-        }
-      }
-    };
-
-    fetchTask();
-  }, [taskId]);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    setLoading(true);
-    setFormError(null);
-
-    try {
-      if (isEditMode && taskId) {
-        // Update existing task
-        const updatedTask = await TaskService.updateTask(taskId, {
-          ...formData,
-          dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
+        })
+        .finally(() => {
+          setLoading(false);
         });
-        if (updatedTask) {
-          onSubmitSuccess();
-        }
-      } else {
-        // Create new task
-        const newTask = await TaskService.addTask({
-          ...formData,
-          dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
-        });
-        if (newTask) {
-          onSubmitSuccess();
-        }
-      }
-    } catch (err) {
-      setFormError('Failed to save task. Please try again.');
-      console.error('Error saving task:', err);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [isEditMode, taskId]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({ ...prevData, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
 
+    // Clear error when field is changed
     if (errors[name]) {
-      setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
   const handlePriorityChange = (priority: 'low' | 'medium' | 'high') => {
-    setFormData(prevData => ({ ...prevData, priority }));
+    setFormData(prev => ({ ...prev, priority }));
   };
 
-  const handleLabelsChange = (labels: LabelType[]) => {
-    setFormData(prevData => ({ ...prevData, labels }));
+  const handleLabelChange = (selectedLabels: Label[]) => {
+    setFormData(prev => ({ ...prev, labels: selectedLabels }));
   };
 
-  const validate = (): boolean => {
+  const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) {
@@ -136,102 +104,116 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setSaveStatus('saving');
+
+    try {
+      if (isEditMode && taskId) {
+        // Update existing task
+        const taskToUpdate = await TaskService.getTask(taskId);
+        if (taskToUpdate) {
+          await TaskService.updateTask(taskId, {
+            ...taskToUpdate,
+            title: formData.title,
+            description: formData.description,
+            dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
+            priority: formData.priority,
+            isCompleted: formData.isCompleted,
+            labels: formData.labels,
+          });
+        }
+      } else {
+        // Create new task
+        await TaskService.addTask({
+          title: formData.title,
+          description: formData.description,
+          dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
+          priority: formData.priority,
+          isCompleted: false,
+          labels: formData.labels,
+        });
+      }
+      setSaveStatus('success');
+      setTimeout(() => {
+        onSubmitSuccess();
+      }, 500);
+    } catch (err) {
+      console.error('Error saving task:', err);
+      setSaveStatus('error');
+    }
+  };
+
+  const handleToggleCompleted = () => {
+    setFormData(prev => ({ ...prev, isCompleted: !prev.isCompleted }));
+  };
+
   return (
-    <FormCard>
-      <FormHeader>
-        <FormTitle>{isEditMode ? 'Edit Task' : 'Create New Task'}</FormTitle>
-      </FormHeader>
+    <FormContainer>
+      {onBack && (
+        <BackLink onClick={onBack}>
+          <IconWrapper>
+            <ArrowLeftIcon />
+          </IconWrapper>
+          Back to Tasks
+        </BackLink>
+      )}
 
-      {fetchingTask && <div className="loading">Loading task data...</div>}
+      <FormCard>
+        <FormHeader>
+          <FormTitle>{isEditMode ? 'Edit Task' : 'Create New Task'}</FormTitle>
+          {saveStatus !== 'idle' && (
+            <StatusIndicator $status={saveStatus}>
+              {saveStatus === 'saving' && 'Saving...'}
+              {saveStatus === 'success' && 'Saved!'}
+              {saveStatus === 'error' && 'Error saving'}
+            </StatusIndicator>
+          )}
+        </FormHeader>
 
-      {formError && <div className="error-message">{formError}</div>}
+        <StyledForm onSubmit={handleSubmit}>
+          <FormSection>
+            <FormFields
+              formData={formData}
+              errors={errors}
+              onChange={handleChange}
+              onPriorityChange={handlePriorityChange}
+            />
+          </FormSection>
 
-      <StyledForm onSubmit={handleSubmit}>
-        <FormGroup>
-          <label htmlFor="title">Title *</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            disabled={fetchingTask || loading}
-          />
-          {errors.title && <div className="error">{errors.title}</div>}
-        </FormGroup>
+          <FormDivider />
 
-        <FormGroup>
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            disabled={fetchingTask || loading}
-          />
-        </FormGroup>
+          <FormSection>
+            <LabelSelector selectedLabels={formData.labels} onChange={handleLabelChange} />
+          </FormSection>
 
-        <FormGroup>
-          <label htmlFor="dueDate">Due Date</label>
-          <input
-            type="date"
-            id="dueDate"
-            name="dueDate"
-            value={formData.dueDate}
-            onChange={handleChange}
-            disabled={fetchingTask || loading}
-          />
-        </FormGroup>
+          {isEditMode && (
+            <FormActions>
+              <Button
+                type="button"
+                onClick={handleToggleCompleted}
+                $variant={formData.isCompleted ? 'completed' : 'incomplete'}
+              >
+                {formData.isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
+              </Button>
+            </FormActions>
+          )}
 
-        <FormGroup>
-          <label>Priority</label>
-          <div className="priority-buttons">
-            <Button
-              type="button"
-              $variant={formData.priority === 'low' ? 'selected' : 'default'}
-              onClick={() => handlePriorityChange('low')}
-              disabled={fetchingTask || loading}
-            >
-              Low
+          <FormActions>
+            <Button type="button" onClick={onCancel}>
+              Cancel
             </Button>
-            <Button
-              type="button"
-              $variant={formData.priority === 'medium' ? 'selected' : 'default'}
-              onClick={() => handlePriorityChange('medium')}
-              disabled={fetchingTask || loading}
-            >
-              Medium
+            <Button type="submit" $variant="primary" disabled={loading || saveStatus === 'saving'}>
+              {isEditMode ? 'Save Changes' : 'Create Task'}
             </Button>
-            <Button
-              type="button"
-              $variant={formData.priority === 'high' ? 'selected' : 'default'}
-              onClick={() => handlePriorityChange('high')}
-              disabled={fetchingTask || loading}
-            >
-              High
-            </Button>
-          </div>
-        </FormGroup>
-
-        <FormGroup>
-          <label>Labels</label>
-          <LabelSelector selectedLabels={formData.labels} onChange={handleLabelsChange} />
-        </FormGroup>
-
-        <FormActions>
-          <Button
-            type="button"
-            $variant="secondary"
-            onClick={onCancel}
-            disabled={loading || fetchingTask}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" $variant="primary" disabled={loading || fetchingTask}>
-            {loading ? 'Saving...' : isEditMode ? 'Update Task' : 'Create Task'}
-          </Button>
-        </FormActions>
-      </StyledForm>
-    </FormCard>
+          </FormActions>
+        </StyledForm>
+      </FormCard>
+    </FormContainer>
   );
 };

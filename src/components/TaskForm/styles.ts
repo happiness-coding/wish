@@ -175,6 +175,66 @@ export const FormActions = styled.div`
   border-top: 1px solid #edf2f7;
 `;
 
+export const ErrorMessage = styled.div`
+  color: #e53e3e;
+  font-size: 0.875rem;
+  margin-top: 0.375rem;
+`;
+
+// Add these to your styles.ts file
+export const StatusIndicator = styled.div<{ $status: string }>`
+  font-size: 0.875rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  animation: fadeIn 0.3s ease-in;
+
+  background-color: ${props => {
+    switch (props.$status) {
+      case 'saving':
+        return '#e2e8f0';
+      case 'success':
+        return '#c6f6d5';
+      case 'error':
+        return '#fed7d7';
+      default:
+        return 'transparent';
+    }
+  }};
+
+  color: ${props => {
+    switch (props.$status) {
+      case 'saving':
+        return '#4a5568';
+      case 'success':
+        return '#2f855a';
+      case 'error':
+        return '#e53e3e';
+      default:
+        return 'inherit';
+    }
+  }};
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
+
+export const FormSection = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+export const FormDivider = styled.div`
+  height: 1px;
+  background-color: #edf2f7;
+  margin: 2rem 0;
+`;
+
+// Update Button to handle completed/incomplete variants
 export const Button = styled.button<{ $variant?: string }>`
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
@@ -183,22 +243,57 @@ export const Button = styled.button<{ $variant?: string }>`
   cursor: pointer;
   transition: all 0.2s ease;
 
-  background-color: ${props => (props.$variant === 'primary' ? '#4f46e5' : 'transparent')};
-  color: ${props => (props.$variant === 'primary' ? 'white' : '#4a5568')};
+  background-color: ${props => {
+    switch (props.$variant) {
+      case 'primary':
+        return '#4f46e5';
+      case 'completed':
+        return '#c6f6d5';
+      case 'incomplete':
+        return '#e2e8f0';
+      default:
+        return 'transparent';
+    }
+  }};
+
+  color: ${props => {
+    switch (props.$variant) {
+      case 'primary':
+        return 'white';
+      case 'completed':
+        return '#2f855a';
+      case 'incomplete':
+        return '#4a5568';
+      default:
+        return '#4a5568';
+    }
+  }};
+
   border: ${props => (props.$variant === 'primary' ? 'none' : '1px solid #e2e8f0')};
 
   &:hover {
-    background-color: ${props => (props.$variant === 'primary' ? '#4338ca' : '#f7fafc')};
+    background-color: ${props => {
+      switch (props.$variant) {
+        case 'primary':
+          return '#4338ca';
+        case 'completed':
+          return '#9ae6b4';
+        case 'incomplete':
+          return '#cbd5e0';
+        default:
+          return '#f7fafc';
+      }
+    }};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    transform: none;
   }
-`;
-
-export const ErrorMessage = styled.div`
-  color: #e53e3e;
-  font-size: 0.875rem;
-  margin-top: 0.375rem;
 `;

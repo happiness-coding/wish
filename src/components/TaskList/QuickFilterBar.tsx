@@ -74,14 +74,14 @@ export const QuickFilterBar: FC<QuickFilterBarProps> = ({
 }) => (
   <FilterBarContainer>
     <StatusButtons>
-      <StatusButton $active={status === 'all'} onClick={() => onStatusChange('all')}>
-        All Tasks
-      </StatusButton>
       <StatusButton $active={status === 'active'} onClick={() => onStatusChange('active')}>
         Active
       </StatusButton>
       <StatusButton $active={status === 'completed'} onClick={() => onStatusChange('completed')}>
         Completed
+      </StatusButton>
+      <StatusButton $active={status === 'all'} onClick={() => onStatusChange('all')}>
+        All Tasks
       </StatusButton>
     </StatusButtons>
 
