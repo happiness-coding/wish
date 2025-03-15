@@ -204,17 +204,6 @@ interface LabelSelectorProps {
   onChange: (labels: Label[]) => void;
 }
 
-interface LabelItemProps {
-  isSelected?: boolean;
-  // Add other custom props here
-}
-
-const LabelItem = styled.div<LabelItemProps>`
-  /* Your styles */
-  background-color: ${props => (props.$isSelected ? 'lightblue' : 'transparent')};
-  /* Other styles based on $isSelected */
-`;
-
 export const LabelSelector: FC<LabelSelectorProps> = ({ selectedLabels, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [labels, setLabels] = useState<Label[]>([]);

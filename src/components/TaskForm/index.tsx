@@ -53,7 +53,7 @@ export const TaskForm: FC<TaskFormProps> = ({ taskId, onSubmitSuccess, onCancel 
             setFormData({
               title: task.title,
               description: task.description,
-              dueDate: task.dueDate ? task.dueDate.toISOString().split('T')[0] : '',
+              dueDate: task.dueDate ? new Date(task.dueDate).toString() : new Date().toString(),
               priority: task.priority,
               labels: task.labels,
               isCompleted: task.isCompleted,
