@@ -22,5 +22,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "node_modules/.pnpm/@hello-pangea+dnd@18.0.1_@types+react@19.0.10_react-dom@19.0.0_react@19.0.0/node_modules/@hello-pangea/dnd/src/global.d.ts"
+  ]
 }

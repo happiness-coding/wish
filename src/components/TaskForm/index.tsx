@@ -1,73 +1,85 @@
 import { FC, useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { format } from 'date-fns';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { Label } from '../../models/Task';
 import { TaskService } from '../../services/TaskService';
-import type { Label as LabelType } from '../../models/Task';
-import { LabelSelector } from '../LabelSelector';
+import { LabelService } from '../../services/LabelService';
 import { FormFields } from './FormFields';
+import { LabelSelector } from '../LabelSelector';
 import {
+  FormContainer,
+  BackLink,
+  IconWrapper,
   FormCard,
   FormHeader,
   FormTitle,
   StyledForm,
-  FormGroup,
   FormActions,
   Button,
+  StatusIndicator,
+  FormSection,
+  FormDivider,
 } from './styles';
-
-type FormData = {
-  title: string;
-  description: string;
-  dueDate: string;
-  priority: 'low' | 'medium' | 'high';
-  labels: LabelType[];
-};
 
 interface TaskFormProps {
   taskId?: number;
+  onBack?: () => void;
   onSubmitSuccess: () => void;
   onCancel: () => void;
 }
 
-export const TaskForm: FC<TaskFormProps> = ({
-  taskId,
-  onSubmitSuccess,
-  onCancel
-}) => {
-  const isEditMode = Boolean(taskId);
-
-  const [formData, setFormData] = useState<FormData>({
+export const TaskForm: FC<TaskFormProps> = ({ taskId, onBack, onSubmitSuccess, onCancel }) => {
+  const [formData, setFormData] = useState({
     title: '',
     description: '',
     dueDate: '',
-    priority: 'medium',
-    labels: []
+    priority: 'medium' as 'low' | 'medium' | 'high',
+    isCompleted: false,
+    labels: [] as Label[],
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [, setAvailableLabels] = useState<Label[]>([]);
+  const isEditMode = taskId !== undefined;
 
+  // Fetch labels
+  useEffect(() => {
+    const labels = LabelService.listLabels();
+    setAvailableLabels(labels);
+  }, []);
+
+  // Fetch task data if in edit mode
   useEffect(() => {
     if (isEditMode && taskId) {
-      const task = TaskService.getTask(taskId);
-
-      if (task) {
-        setFormData({
-          title: task.title,
-          description: task.description,
-          dueDate: task.dueDate ? format(task.dueDate, 'yyyy-MM-dd') : '',
-          priority: task.priority,
-          labels: task.labels
+      setLoading(true);
+      TaskService.getTask(taskId)
+        .then(task => {
+          if (task) {
+            setFormData({
+              title: task.title,
+              description: task.description,
+              dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
+              priority: task.priority,
+              isCompleted: task.isCompleted,
+              labels: task.labels || [],
+            });
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching task:', err);
+        })
+        .finally(() => {
+          setLoading(false);
         });
-      } else {
-        onCancel();
-      }
     }
-  }, [taskId, isEditMode, onCancel]);
+  }, [isEditMode, taskId]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
 
+    // Clear error when field is changed
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -77,11 +89,11 @@ export const TaskForm: FC<TaskFormProps> = ({
     setFormData(prev => ({ ...prev, priority }));
   };
 
-  const handleLabelsChange = (labels: LabelType[]) => {
-    setFormData(prev => ({ ...prev, labels }));
+  const handleLabelChange = (selectedLabels: Label[]) => {
+    setFormData(prev => ({ ...prev, labels: selectedLabels }));
   };
 
-  const validate = (): boolean => {
+  const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) {
@@ -92,66 +104,116 @@ export const TaskForm: FC<TaskFormProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!validate() || isSubmitting) {
+    if (!validateForm()) {
       return;
     }
 
-    setIsSubmitting(true);
-
-    const taskData = {
-      title: formData.title,
-      description: formData.description,
-      dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
-      priority: formData.priority,
-      labels: formData.labels,
-      isCompleted: false
-    };
+    setSaveStatus('saving');
 
     try {
       if (isEditMode && taskId) {
-        TaskService.updateTask(taskId, taskData);
+        // Update existing task
+        const taskToUpdate = await TaskService.getTask(taskId);
+        if (taskToUpdate) {
+          await TaskService.updateTask(taskId, {
+            ...taskToUpdate,
+            title: formData.title,
+            description: formData.description,
+            dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
+            priority: formData.priority,
+            isCompleted: formData.isCompleted,
+            labels: formData.labels,
+          });
+        }
       } else {
-        TaskService.addTask(taskData);
+        // Create new task
+        await TaskService.addTask({
+          title: formData.title,
+          description: formData.description,
+          dueDate: formData.dueDate ? new Date(formData.dueDate) : null,
+          priority: formData.priority,
+          isCompleted: false,
+          labels: formData.labels,
+        });
       }
-      onSubmitSuccess();
-    } catch (error) {
-      console.error('Failed to save task:', error);
-      setIsSubmitting(false);
+      setSaveStatus('success');
+      setTimeout(() => {
+        onSubmitSuccess();
+      }, 500);
+    } catch (err) {
+      console.error('Error saving task:', err);
+      setSaveStatus('error');
     }
   };
 
+  const handleToggleCompleted = () => {
+    setFormData(prev => ({ ...prev, isCompleted: !prev.isCompleted }));
+  };
+
   return (
-    <FormCard>
-      <FormHeader>
-        <FormTitle>{isEditMode ? 'Edit Task' : 'Create New Task'}</FormTitle>
-      </FormHeader>
-      <StyledForm onSubmit={handleSubmit}>
-        <FormFields
-          formData={formData}
-          errors={errors}
-          onChange={handleChange}
-          onPriorityChange={handlePriorityChange}
-        />
+    <FormContainer>
+      {onBack && (
+        <BackLink onClick={onBack}>
+          <IconWrapper>
+            <ArrowLeftIcon />
+          </IconWrapper>
+          Back to Tasks
+        </BackLink>
+      )}
 
-        <FormGroup>
-          <LabelSelector
-            selectedLabels={formData.labels}
-            onChange={handleLabelsChange}
-          />
-        </FormGroup>
+      <FormCard>
+        <FormHeader>
+          <FormTitle>{isEditMode ? 'Edit Task' : 'Create New Task'}</FormTitle>
+          {saveStatus !== 'idle' && (
+            <StatusIndicator $status={saveStatus}>
+              {saveStatus === 'saving' && 'Saving...'}
+              {saveStatus === 'success' && 'Saved!'}
+              {saveStatus === 'error' && 'Error saving'}
+            </StatusIndicator>
+          )}
+        </FormHeader>
 
-        <FormActions>
-          <Button type="button" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" variant="primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : isEditMode ? 'Update Task' : 'Create Task'}
-          </Button>
-        </FormActions>
-      </StyledForm>
-    </FormCard>
+        <StyledForm onSubmit={handleSubmit}>
+          <FormSection>
+            <FormFields
+              formData={formData}
+              errors={errors}
+              onChange={handleChange}
+              onPriorityChange={handlePriorityChange}
+            />
+          </FormSection>
+
+          <FormDivider />
+
+          <FormSection>
+            <LabelSelector selectedLabels={formData.labels} onChange={handleLabelChange} />
+          </FormSection>
+
+          {isEditMode && (
+            <FormActions>
+              <Button
+                type="button"
+                onClick={handleToggleCompleted}
+                $variant={formData.isCompleted ? 'completed' : 'incomplete'}
+              >
+                {formData.isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
+              </Button>
+            </FormActions>
+          )}
+
+          <FormActions>
+            <Button type="button" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" $variant="primary" disabled={loading || saveStatus === 'saving'}>
+              {isEditMode ? 'Save Changes' : 'Create Task'}
+            </Button>
+          </FormActions>
+        </StyledForm>
+      </FormCard>
+    </FormContainer>
   );
 };

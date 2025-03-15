@@ -1,0 +1,422 @@
+# src/api-spec/task-api.yaml
+openapi: 3.0.3
+info:
+  title: Task Manager API
+  description: API specification for the Task Manager application
+  version: 1.0.0
+servers:
+  - url: '{baseUrl}/api/v1'
+    variables:
+      baseUrl:
+        default: http://localhost:3001
+        description: API base URL
+
+security:
+  - bearerAuth: []
+
+paths:
+  /tasks:
+    get:
+      summary: List tasks
+      description: Get a list of tasks with optional filtering
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          description: Filter by task status
+          schema:
+            type: string
+            enum: [all, active, completed]
+        - name: priority
+          in: query
+          description: Filter by task priority
+          schema:
+            type: string
+            enum: [low, medium, high]
+        - name: labels
+          in: query
+          description: Filter by label IDs
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: dateRange
+          in: query
+          description: Filter by date range
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  start:
+                    type: string
+                    format: date
+                  end:
+                    type: string
+                    format: date
+        - name: search
+          in: query
+          description: Search term for task title/description
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+            enum: [dueDate, priority, createdAt]
+        - name: sortOrder
+          in: query
+          description: Sort direction
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      summary: Create a new task
+      description: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /tasks/{id}:
+    get:
+      summary: Get task by ID
+      description: Get a specific task by its ID
+      parameters:
+        - $ref: '#/components/parameters/TaskIdParam'
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    patch:
+      summary: Update task
+      description: Update a specific task by its ID
+      parameters:
+        - $ref: '#/components/parameters/TaskIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      summary: Delete task
+      description: Delete a specific task by its ID
+      parameters:
+        - $ref: '#/components/parameters/TaskIdParam'
+      responses:
+        '200':
+          description: Task deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /tasks/batch:
+    patch:
+      summary: Batch update tasks
+      description: Update multiple tasks in a single request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchUpdateRequest'
+      responses:
+        '200':
+          description: Updated tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchUpdateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /tasks/{id}/toggle-complete:
+    patch:
+      summary: Toggle task completion
+      description: Toggle the completion status of a task
+      parameters:
+        - $ref: '#/components/parameters/TaskIdParam'
+      responses:
+        '200':
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    TaskIdParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: The task ID
+
+    PageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+        default: 1
+
+    LimitParam:
+      name: limit
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        default: 10
+
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        priority:
+          type: string
+          enum: [low, medium, high]
+        isCompleted:
+          type: boolean
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - isCompleted
+        - createdAt
+        - updatedAt
+
+    TaskCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        priority:
+          type: string
+          enum: [low, medium, high]
+        isCompleted:
+          type: boolean
+          default: false
+        labels:
+          type: array
+          items:
+            type: integer
+      required:
+        - title
+
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        priority:
+          type: string
+          enum: [low, medium, high]
+        isCompleted:
+          type: boolean
+        labels:
+          type: array
+          items:
+            type: integer
+
+    Label:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        color:
+          type: string
+      required:
+        - id
+        - name
+        - color
+
+    TaskListResponse:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    TaskResponse:
+      type: object
+      properties:
+        task:
+          $ref: '#/components/schemas/Task'
+
+    BatchUpdateRequest:
+      type: object
+      properties:
+        updates:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              task:
+                $ref: '#/components/schemas/TaskUpdate'
+            required:
+              - id
+              - task
+
+    BatchUpdateResponse:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        updatedCount:
+          type: integer
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
+
+  responses:
+    BadRequestError:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    UnauthorizedError:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

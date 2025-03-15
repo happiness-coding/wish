@@ -23,29 +23,26 @@ export const CalendarDay: FC<CalendarDayProps> = ({
   isUnscheduledSection = false,
   tasks,
   onTaskClick,
-  droppableProvided
+  droppableProvided,
 }) => {
   const isToday = day ? isSameDay(day, new Date()) : false;
 
   return (
     <Day
-        ref={droppableProvided.innerRef}
-        {...droppableProvided.droppableProps}
-        $isCurrentMonth={isCurrentMonth}
-        $isWeekend={isWeekend}
-        $isToday={isToday}
-        $isUnscheduledSection={isUnscheduledSection}
+      ref={droppableProvided.innerRef}
+      {...droppableProvided.droppableProps}
+      $isCurrentMonth={isCurrentMonth}
+      $isWeekend={isWeekend}
+      $isToday={isToday}
+      $isUnscheduledSection={isUnscheduledSection}
     >
       {day && (
-          <DayNumber $isWeekend={isWeekend} $isToday={isToday}>
-            {format(day, 'd')}
-          </DayNumber>
+        <DayNumber $isWeekend={isWeekend} $isToday={isToday}>
+          {format(day, 'd')}
+        </DayNumber>
       )}
 
-      <DayTaskList
-        tasks={tasks}
-        onTaskClick={onTaskClick}
-      />
+      <DayTaskList tasks={tasks} onTaskClick={onTaskClick} />
 
       {droppableProvided.placeholder}
     </Day>

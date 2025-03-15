@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { Task } from '../../models/Task';
+import { isPast, isToday } from 'date-fns';
 import { TaskHeader } from './TaskHeader';
 import { TaskDescription } from './TaskDescription';
 import { ActionBar } from './ActionBar';
@@ -11,49 +12,67 @@ import {
   NoTaskMessage,
   NoTaskTitle,
   NoTaskText,
-  ActionButton
+  ActionButton,
 } from './styles';
 
 interface TaskDetailProps {
   task?: Task;
   loading: boolean;
+  error: string | null;
   onBack: () => void;
   onToggleComplete: () => void;
   onEdit: (id: number) => void;
   onDelete: () => void;
+  onRetry: () => void;
 }
 
 export const TaskDetail: FC<TaskDetailProps> = ({
   task,
   loading,
+  error,
   onBack,
   onToggleComplete,
   onEdit,
-  onDelete
+  onDelete,
+  onRetry,
 }) => {
-  const isPastDue = (date: Date | null) => {
+  const isPastDue = (date: Date | null): boolean => {
     if (!date) return false;
-    return new Date(date) < new Date();
+    return isPast(new Date(date)) && !isToday(new Date(date));
   };
-
   if (loading) {
-    return <DetailContainer>Loading...</DetailContainer>;
+    return (
+      <DetailContainer>
+        <div className="loading">Loading task details...</div>
+      </DetailContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <DetailContainer>
+        <div className="error-message">
+          {error}
+          <ActionButton onClick={onRetry}>Retry</ActionButton>
+        </div>
+      </DetailContainer>
+    );
   }
 
   if (!task) {
     return (
       <DetailContainer>
         <BackLink onClick={onBack}>
-          <IconWrapper><ArrowLeftIcon /></IconWrapper>
+          <IconWrapper>
+            <ArrowLeftIcon />
+          </IconWrapper>
           Back to Tasks
         </BackLink>
+
         <NoTaskMessage>
-          <NoTaskTitle>Task not found</NoTaskTitle>
+          <NoTaskTitle>Task Not Found</NoTaskTitle>
           <NoTaskText>The task you're looking for doesn't exist or has been deleted.</NoTaskText>
-          <ActionButton onClick={onBack}>
-            <IconWrapper><ArrowLeftIcon /></IconWrapper>
-            Return to Task List
-          </ActionButton>
+          <ActionButton onClick={onBack}>Return to Task List</ActionButton>
         </NoTaskMessage>
       </DetailContainer>
     );
@@ -62,12 +81,16 @@ export const TaskDetail: FC<TaskDetailProps> = ({
   return (
     <DetailContainer>
       <BackLink onClick={onBack}>
-        <IconWrapper><ArrowLeftIcon /></IconWrapper>
+        <IconWrapper>
+          <ArrowLeftIcon />
+        </IconWrapper>
         Back to Tasks
       </BackLink>
 
       <TaskHeader task={task} isPastDue={isPastDue} />
+
       <TaskDescription description={task.description} isCompleted={task.isCompleted} />
+
       <ActionBar
         isCompleted={task.isCompleted}
         onToggleComplete={onToggleComplete}

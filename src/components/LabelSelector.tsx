@@ -48,7 +48,7 @@ const DeleteButton = styled.button`
   height: 1rem;
   color: currentColor;
   opacity: 0.7;
-  
+
   &:hover {
     opacity: 1;
   }
@@ -76,13 +76,13 @@ const Input = styled.input`
   outline: none;
   font-size: 0.95rem;
   background: transparent;
-  
+
   &::placeholder {
     color: #a0aec0;
   }
 `;
 
-const Dropdown = styled.div<{ show: boolean }>`
+const Dropdown = styled.div<{ $show: boolean }>`
   position: absolute;
   top: 100%;
   left: 0;
@@ -95,20 +95,20 @@ const Dropdown = styled.div<{ show: boolean }>`
   max-height: 200px;
   overflow-y: auto;
   z-index: 10;
-  display: ${props => props.show ? 'block' : 'none'};
+  display: ${props => (props.$show ? 'block' : 'none')};
 `;
 
-const LabelOption = styled.div<{ isSelected: boolean, color: string }>`
+const LabelOption = styled.div<{ $isSelected: boolean; color: string }>`
   display: flex;
   align-items: center;
   padding: 0.625rem 0.75rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  
-  background-color: ${props => props.isSelected ? `${props.color}10` : 'transparent'};
-  
+
+  background-color: ${props => (props.$isSelected ? `${props.color}10` : 'transparent')};
+
   &:hover {
-    background-color: ${props => props.isSelected ? `${props.color}20` : '#f7fafc'};
+    background-color: ${props => (props.$isSelected ? `${props.color}20` : '#f7fafc')};
   }
 `;
 
@@ -126,7 +126,7 @@ const LabelName = styled.span`
   font-size: 0.95rem;
 `;
 
-const AddLabelForm = styled.form`
+const AddLabelForm = styled.div`
   padding: 0.75rem;
   border-top: 1px solid #e2e8f0;
   display: flex;
@@ -153,7 +153,7 @@ const NewLabelInput = styled.input`
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   outline: none;
-  
+
   &:focus {
     border-color: #4f46e5;
   }
@@ -165,11 +165,11 @@ const ColorInput = styled.input`
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   cursor: pointer;
-  
+
   &::-webkit-color-swatch-wrapper {
     padding: 0;
   }
-  
+
   &::-webkit-color-swatch {
     border: none;
     border-radius: 3px;
@@ -269,13 +269,15 @@ export const LabelSelector: FC<LabelSelectorProps> = ({ selectedLabels, onChange
     setIsOpen(false);
   };
 
-  const handleAddLabel = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddLabel = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
 
     if (newLabel) {
       const label = LabelService.addLabel({
         name: newLabel,
-        color: labelColor
+        color: labelColor,
       });
 
       if (label) {
@@ -316,12 +318,12 @@ export const LabelSelector: FC<LabelSelectorProps> = ({ selectedLabels, onChange
         />
       </LabelInput>
 
-      <Dropdown show={isOpen}>
+      <Dropdown $show={isOpen}>
         {filteredLabels.length > 0 ? (
           filteredLabels.map(label => (
             <LabelOption
               key={label.id}
-              isSelected={isSelected(label)}
+              $isSelected={isSelected(label)}
               color={label.color}
               onClick={() => handleSelectLabel(label)}
             >
@@ -330,12 +332,14 @@ export const LabelSelector: FC<LabelSelectorProps> = ({ selectedLabels, onChange
             </LabelOption>
           ))
         ) : searchTerm && !isAddingNew ? (
-          <AddLabelForm onSubmit={e => {
-            e.preventDefault();
-            setIsAddingNew(true);
-            setNewLabel(searchTerm);
-          }}>
-            <AddButton type="submit">
+          <AddLabelForm>
+            <AddButton
+              type="button"
+              onClick={() => {
+                setIsAddingNew(true);
+                setNewLabel(searchTerm);
+              }}
+            >
               <IconWrapper style={{ marginRight: '0.25rem' }}>
                 <PlusIcon />
               </IconWrapper>
@@ -345,7 +349,7 @@ export const LabelSelector: FC<LabelSelectorProps> = ({ selectedLabels, onChange
         ) : null}
 
         {isAddingNew || (!filteredLabels.length && !searchTerm) ? (
-          <AddLabelForm onSubmit={handleAddLabel}>
+          <AddLabelForm>
             <AddLabelHeader>Add new label</AddLabelHeader>
             <LabelInputGroup>
               <NewLabelInput
@@ -361,10 +365,7 @@ export const LabelSelector: FC<LabelSelectorProps> = ({ selectedLabels, onChange
                 onChange={e => setLabelColor(e.target.value)}
               />
             </LabelInputGroup>
-            <AddButton
-              type="submit"
-              disabled={!newLabel}
-            >
+            <AddButton type="button" onClick={handleAddLabel} disabled={!newLabel}>
               <IconWrapper style={{ marginRight: '0.25rem' }}>
                 <PlusIcon />
               </IconWrapper>

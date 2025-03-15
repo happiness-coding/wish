@@ -57,7 +57,6 @@ export const Subtitle = styled.p`
   max-width: 500px;
 `;
 
-
 export const FilterBar = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -69,7 +68,6 @@ export const FilterBar = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 `;
 
-
 export const FilterButton = styled.button<{ $active: boolean }>`
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -77,12 +75,12 @@ export const FilterButton = styled.button<{ $active: boolean }>`
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  background-color: ${props => props.$active ? '#4f46e5' : '#f1f5f9'};
-  color: ${props => props.$active ? 'white' : '#475569'};
+  background-color: ${props => (props.$active ? '#4f46e5' : '#f1f5f9')};
+  color: ${props => (props.$active ? 'white' : '#475569')};
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: ${props => props.$active ? '#4338ca' : '#e2e8f0'};
+    background-color: ${props => (props.$active ? '#4338ca' : '#e2e8f0')};
   }
 `;
 
@@ -109,7 +107,7 @@ export const Card = styled.div<{ $isCompleted: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
-  opacity: ${props => props.$isCompleted ? 0.8 : 1};
+  opacity: ${props => (props.$isCompleted ? 0.8 : 1)};
 
   &:hover {
     transform: translateY(-2px);
@@ -120,11 +118,15 @@ export const Card = styled.div<{ $isCompleted: boolean }>`
 export const PriorityBanner = styled.div<{ $priority: 'low' | 'medium' | 'high' }>`
   height: 8px;
   background-color: ${props => {
-    switch(props.$priority) {
-      case 'high': return '#ef4444';
-      case 'medium': return '#f59e0b';
-      case 'low': return '#10b981';
-      default: return '#a3a3a3';
+    switch (props.$priority) {
+      case 'high':
+        return '#ef4444';
+      case 'medium':
+        return '#f59e0b';
+      case 'low':
+        return '#10b981';
+      default:
+        return '#a3a3a3';
     }
   }};
 `;
@@ -141,17 +143,20 @@ export const PriorityLabel = styled.div<{ $priority: 'low' | 'medium' | 'high' }
   font-weight: 600;
   text-transform: uppercase;
   color: ${props => {
-    switch(props.$priority) {
-      case 'high': return '#dc2626';
-      case 'medium': return '#d97706';
-      case 'low': return '#059669';
-      default: return '#6b7280';
+    switch (props.$priority) {
+      case 'high':
+        return '#dc2626';
+      case 'medium':
+        return '#d97706';
+      case 'low':
+        return '#059669';
+      default:
+        return '#6b7280';
     }
   }};
   letter-spacing: 0.05em;
   margin-bottom: 0.75rem;
 `;
-
 
 export const Meta = styled.div`
   display: flex;
@@ -164,8 +169,8 @@ export const Meta = styled.div`
 
 export const DueDate = styled.div<{ $isPastDue: boolean }>`
   font-size: 0.875rem;
-  color: ${props => props.$isPastDue ? '#dc2626' : '#718096'};
-  font-weight: ${props => props.$isPastDue ? '600' : '400'};
+  color: ${props => (props.$isPastDue ? '#dc2626' : '#718096')};
+  font-weight: ${props => (props.$isPastDue ? '600' : '400')};
 `;
 
 export const CreatedDate = styled.div`
@@ -182,7 +187,7 @@ export const Actions = styled.div`
   justify-content: space-between;
 `;
 
-export const ActionButton = styled.button<{ variant?: string }>`
+export const ActionButton = styled.button<{ $variant?: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -197,35 +202,50 @@ export const ActionButton = styled.button<{ variant?: string }>`
   height: 2rem;
 
   background-color: ${props => {
-    switch(props.variant) {
-        case 'delete': return '#FED7D7';
-        case 'edit': return '#E9D8FD';
-        case 'complete': return '#C6F6D5';
-        case 'view': return '#BEE3F8';
-        default: return '#E2E8F0';
+    switch (props.$variant) {
+      case 'delete':
+        return '#FED7D7';
+      case 'edit':
+        return '#E9D8FD';
+      case 'complete':
+        return '#C6F6D5';
+      case 'view':
+        return '#BEE3F8';
+      default:
+        return '#E2E8F0';
     }
-}};
+  }};
 
   color: ${props => {
-    switch(props.variant) {
-        case 'delete': return '#E53E3E';
-        case 'edit': return '#805AD5';
-        case 'complete': return '#38A169';
-        case 'view': return '#3182CE';
-        default: return '#4A5568';
+    switch (props.$variant) {
+      case 'delete':
+        return '#E53E3E';
+      case 'edit':
+        return '#805AD5';
+      case 'complete':
+        return '#38A169';
+      case 'view':
+        return '#3182CE';
+      default:
+        return '#4A5568';
     }
-}};
+  }};
 
   &:hover {
     background-color: ${props => {
-    switch(props.variant) {
-        case 'delete': return '#FEB2B2';
-        case 'edit': return '#D6BCFA';
-        case 'complete': return '#9AE6B4';
-        case 'view': return '#90CDF4';
-        default: return '#CBD5E0';
-    }
-}};
+      switch (props.$variant) {
+        case 'delete':
+          return '#FEB2B2';
+        case 'edit':
+          return '#D6BCFA';
+        case 'complete':
+          return '#9AE6B4';
+        case 'view':
+          return '#90CDF4';
+        default:
+          return '#CBD5E0';
+      }
+    }};
   }
 `;
 export const IconWrapper = styled.span`
@@ -298,22 +318,24 @@ export const HeaderContent = styled.div`
   gap: 0.5rem;
 `;
 
-export const Title = styled.h1`
+export const Title = styled.h1<{ $isCompleted?: boolean }>`
   font-size: 2rem;
   font-weight: 700;
   color: #111827;
   margin: 0;
+  text-decoration: ${props => (props.$isCompleted ? 'line-through' : 'none')};
+  opacity: ${props => (props.$isCompleted ? 0.7 : 1)};
 `;
 
-export const Description = styled.p`
+export const Description = styled.p<{ $isCompleted?: boolean }>`
   font-size: 1.125rem;
   color: #6b7280;
   margin: 0;
+  text-decoration: ${props => (props.$isCompleted ? 'line-through' : 'none')};
+  opacity: ${props => (props.$isCompleted ? 0.7 : 1)};
 `;
-
 export const HeaderActions = styled.div`
   display: flex;
   gap: 1rem;
   align-items: center;
 `;
-

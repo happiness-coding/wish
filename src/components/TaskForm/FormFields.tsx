@@ -10,7 +10,7 @@ import {
   RadioLabel,
   HiddenRadio,
   PriorityDot,
-  ErrorMessage
+  ErrorMessage,
 } from './styles';
 
 interface FormData {
@@ -32,7 +32,7 @@ export const FormFields: FC<FormFieldsProps> = ({
   formData,
   errors,
   onChange,
-  onPriorityChange
+  onPriorityChange,
 }) => {
   return (
     <>
@@ -77,11 +77,7 @@ export const FormFields: FC<FormFieldsProps> = ({
         <Label>Priority</Label>
         <RadioGroup>
           {(['low', 'medium', 'high'] as const).map(priority => (
-            <RadioLabel
-              key={priority}
-              priority={priority}
-              checked={formData.priority === priority}
-            >
+            <RadioLabel key={priority} priority={priority} checked={formData.priority === priority}>
               <HiddenRadio
                 type="radio"
                 name="priority"

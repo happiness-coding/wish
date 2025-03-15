@@ -9,28 +9,57 @@ export const TaskDetailPage: FC = () => {
   const { id } = useParams<{ id: string }>();
   const [task, setTask] = useState<Task | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (id) {
-      const taskId = parseInt(id, 10);
-      const foundTask = TaskService.getTask(taskId);
-      setTask(foundTask);
-      setLoading(false);
-    }
+    const fetchTask = async () => {
+      if (id) {
+        setLoading(true);
+        try {
+          const taskId = parseInt(id, 10);
+          const foundTask = await TaskService.getTask(taskId);
+          setTask(foundTask);
+          setError(null);
+        } catch (err) {
+          setError('Failed to load task details. Please try again later.');
+          console.error('Error fetching task:', err);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchTask();
   }, [id]);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (task && window.confirm('Are you sure you want to delete this task?')) {
-      TaskService.deleteTask(task.id);
-      navigate('/tasks');
+      try {
+        const success = await TaskService.deleteTask(task.id);
+        if (success) {
+          navigate('/tasks');
+        } else {
+          setError('Failed to delete task');
+        }
+      } catch (err) {
+        setError('Failed to delete task. Please try again.');
+        console.error('Error deleting task:', err);
+      }
     }
   };
 
-  const handleToggleComplete = () => {
+  const handleToggleComplete = async () => {
     if (task) {
-      const updatedTask = TaskService.toggleComplete(task.id);
-      setTask(updatedTask);
+      try {
+        const updatedTask = await TaskService.toggleComplete(task.id);
+        if (updatedTask) {
+          setTask(updatedTask);
+        }
+      } catch (err) {
+        setError('Failed to update task status. Please try again.');
+        console.error('Error toggling task completion:', err);
+      }
     }
   };
 
@@ -46,10 +75,12 @@ export const TaskDetailPage: FC = () => {
     <TaskDetail
       task={task}
       loading={loading}
+      error={error}
       onBack={handleBack}
       onToggleComplete={handleToggleComplete}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      onRetry={() => id && setLoading(true)}
     />
   );
 };

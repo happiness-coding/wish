@@ -5,8 +5,7 @@ import { Label } from '../models/Task';
 let labels: Label[] = [
   { id: 1, name: 'Work', color: '#3b82f6' },
   { id: 2, name: 'Personal', color: '#8b5cf6' },
-  { id: 3, name: 'Shopping', color: '#ec4899' },
-  { id: 4, name: 'Health', color: '#10b981' }
+  { id: 3, name: 'Urgent', color: '#ec4899' },
 ];
 
 export const LabelService = {
@@ -30,7 +29,7 @@ export const LabelService = {
 
     const newLabel = {
       ...label,
-      id: labels.length ? Math.max(...labels.map(l => l.id)) + 1 : 1
+      id: labels.length ? Math.max(...labels.map(l => l.id)) + 1 : 1,
     };
 
     labels.push(newLabel);
@@ -50,7 +49,7 @@ export const LabelService = {
     if (index !== -1) {
       labels[index] = {
         ...labels[index],
-        ...updatedLabel
+        ...updatedLabel,
       };
       return labels[index];
     }
@@ -61,5 +60,5 @@ export const LabelService = {
     const initialLength = labels.length;
     labels = labels.filter(label => label.id !== id);
     return labels.length < initialLength;
-  }
+  },
 };

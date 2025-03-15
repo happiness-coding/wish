@@ -10,7 +10,7 @@ import {
   WeekDay,
   CalendarGrid as Grid,
   UnscheduledTasksContainer,
-  UnscheduledTasksHeader
+  UnscheduledTasksHeader,
 } from './styles';
 
 interface CalendarGridProps {
@@ -24,9 +24,10 @@ interface CalendarGridProps {
 
 export const CalendarGrid: FC<CalendarGridProps> = ({
   days,
-  currentDate,onTaskClick,
+  currentDate,
+  onTaskClick,
   getTasksForDate,
-  unscheduledTasks
+  unscheduledTasks,
 }) => {
   return (
     <>
@@ -37,18 +38,15 @@ export const CalendarGrid: FC<CalendarGridProps> = ({
           ))}
         </WeekHeader>
         <Grid>
-          {days.map((day) => {
+          {days.map(day => {
             const isCurrentMonth = isSameMonth(day, currentDate);
             const isWeekendDay = isWeekend(day);
             const tasksForDay = getTasksForDate(day);
             const dateString = format(day, 'yyyy-MM-dd');
 
             return (
-              <Droppable
-                droppableId={day.toISOString()}
-                key={dateString}
-              >
-                {(provided) => (
+              <Droppable droppableId={day.toISOString()} key={dateString}>
+                {provided => (
                   <CalendarDay
                     day={day}
                     isCurrentMonth={isCurrentMonth}
@@ -68,11 +66,8 @@ export const CalendarGrid: FC<CalendarGridProps> = ({
         <UnscheduledTasksContainer>
           <UnscheduledTasksHeader>Unscheduled Tasks</UnscheduledTasksHeader>
           <Droppable droppableId="unscheduled">
-            {(provided) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
+            {provided => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
                 <CalendarDay
                   isUnscheduledSection={true}
                   tasks={unscheduledTasks}
